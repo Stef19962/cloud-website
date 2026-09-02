@@ -13,6 +13,14 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Write server-side secrets config (not committed to git)
+        run: |
+          cat > anfrage-config.php << 'PHPEOF'
+          <?php
+          define('NOTION_TOKEN', '${{ secrets.NOTION_ANFRAGEN_TOKEN }}');
+          define('NOTION_DATABASE_ID', '3fafbad5-a3be-41d5-ab71-7779ddf32af3');
+          PHPEOF
+
       - name: Deploy via FTPS
         uses: SamKirkland/FTP-Deploy-Action@v4.3.6
         with:

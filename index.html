@@ -247,7 +247,7 @@ table.varianten td{font-size:13px; padding:11px 12px; border-bottom:1px solid va
 .checkbox.checked{background:var(--accent); border-color:var(--accent);}
 .success-panel{display:none; flex-direction:column; align-items:center; text-align:center; gap:14px; padding:60px 20px;}
 .success-panel.show{display:flex;}
-.success-panel.show + .anfrage-form{display:none;}
+.success-panel.show + #anfrage-form-wrap{display:none;}
 
 .crumb{font-size:13px; color:var(--muted-2); padding:20px 0 0;}
 .crumb a{color:var(--muted-2);}
@@ -1029,8 +1029,8 @@ table.varianten td{font-size:13px; padding:11px 12px; border-bottom:1px solid va
 
     <div class="success-panel" id="success-panel">
       <svg width="52" height="52" viewBox="0 0 52 52" fill="none"><circle cx="26" cy="26" r="24" stroke="var(--accent)" stroke-width="2.5"/><path d="M16 27l7 7 13-14" stroke="var(--accent)" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      <h2 style="font-size:24px;">Anfrage eingegangen (Demo)</h2>
-      <p style="font-size:14.5px; color:var(--muted); max-width:420px;">In der echten Website würde diese Anfrage jetzt automatisch in die Notion-Anfragedatenbank übertragen. Hier ist nichts wirklich gesendet worden.</p>
+      <h2 style="font-size:24px;">Anfrage erfolgreich gesendet</h2>
+      <p style="font-size:14.5px; color:var(--muted); max-width:420px;">Vielen Dank! Ihre Anfrage wurde an unser Team übermittelt. Wir melden uns so rasch wie möglich bei Ihnen.</p>
       <button class="btn btn-outline" onclick="resetForm()">Zurück zur Anfrage</button>
     </div>
 
@@ -1050,12 +1050,13 @@ table.varianten td{font-size:13px; padding:11px 12px; border-bottom:1px solid va
           <p style="font-size:13px; color:var(--muted);">Mit <span class="req">*</span> markierte Felder sind Pflichtfelder.</p>
         </div>
         <div class="form-grid">
-          <div class="field"><label>Firma <span class="req">*</span></label><input type="text" placeholder="Ihre Firma GmbH" required></div>
-          <div class="field"><label>Ansprechpartner <span class="req">*</span></label><input type="text" placeholder="Vor- und Nachname" required></div>
-          <div class="field"><label>E-Mail <span class="req">*</span></label><input type="email" placeholder="name@firma.at" required></div>
-          <div class="field"><label>Telefon</label><input type="text" placeholder="+43 &hellip;"></div>
+          <div class="field"><label>Firma <span class="req">*</span></label><input type="text" id="req-firma" placeholder="Ihre Firma GmbH" required></div>
+          <div class="field"><label>Ansprechpartner <span class="req">*</span></label><input type="text" id="req-ansprechpartner" placeholder="Vor- und Nachname" required></div>
+          <div class="field"><label>E-Mail <span class="req">*</span></label><input type="email" id="req-email" placeholder="name@firma.at" required></div>
+          <div class="field"><label>Telefon</label><input type="text" id="req-telefon" placeholder="+43 &hellip;"></div>
         </div>
-        <div class="field"><label>Projektbeschreibung <span class="req">*</span></label><textarea rows="4" placeholder="z. B. Umrüstung Lagerhalle, ca. 800 m&sup2; &hellip;" required></textarea></div>
+        <div class="field"><label>Projektbeschreibung <span class="req">*</span></label><textarea rows="4" id="req-projekt" placeholder="z. B. Umrüstung Lagerhalle, ca. 800 m&sup2; &hellip;" required></textarea></div>
+        <input type="text" id="req-honeypot" name="website" tabindex="-1" autocomplete="off" style="position:absolute; left:-9999px; width:1px; height:1px; opacity:0;" aria-hidden="true">
         <div class="field">
           <label>Zusätzliche Fragen</label>
           <div class="check-row"><div class="checkbox" id="chk-delivery" onclick="this.classList.toggle('checked')"></div><p style="font-size:12.5px; color:var(--muted); line-height:1.6;">Bitte auch die Lieferzeit angeben.</p></div>
@@ -1269,9 +1270,80 @@ function go(id, slug){
     window.scrollTo({top:0, behavior:'auto'});
   }
 }
+function buildCartSummary(){
+  var produkt = [], variante = [], art = [], totalQty = 0;
+  cart.forEach(function(c){
+    var p = PRODUCTS_BY_SLUG[c.slug];
+    if(!p) return;
+    var v = p.variants[c.variantIdx] || p.variants[0];
+    produkt.push(p.name + ' (x' + c.qty + ')');
+    var vParts = [v.leistung];
+    if(v.lichtfarbe) vParts.push(v.lichtfarbe);
+    if(v.dims && v.dims !== '–') vParts.push(v.dims);
+    variante.push(vParts.join(' · '));
+    art.push(v.art);
+    totalQty += c.qty;
+  });
+  return {
+    produkt: produkt.join('\n'),
+    variante: variante.join('\n'),
+    artikelnummer: art.join('\n'),
+    stueckzahl: totalQty
+  };
+}
 function submitForm(ev){
   ev.preventDefault();
-  document.getElementById('success-panel').classList.add('show');
+  var privacyChk = document.getElementById('chk-privacy');
+  if(!privacyChk || !privacyChk.classList.contains('checked')){
+    alert('Bitte bestätigen Sie, dass Sie die Datenschutzerklärung gelesen haben.');
+    return false;
+  }
+  var extras = [];
+  if(document.getElementById('chk-delivery').classList.contains('checked')) extras.push('Lieferzeit bitte angeben.');
+  if(document.getElementById('chk-stock').classList.contains('checked')) extras.push('Bitte prüfen, ob Artikel lagernd sind.');
+  if(document.getElementById('chk-newsletter').classList.contains('checked')) extras.push('Newsletter-Anmeldung gewünscht.');
+
+  var cartSummary = buildCartSummary();
+  var honeypot = document.getElementById('req-honeypot');
+  var payload = {
+    firma: document.getElementById('req-firma').value,
+    ansprechpartner: document.getElementById('req-ansprechpartner').value,
+    email: document.getElementById('req-email').value,
+    telefon: document.getElementById('req-telefon').value,
+    projekt: document.getElementById('req-projekt').value,
+    produkt: cartSummary.produkt,
+    variante: cartSummary.variante,
+    artikelnummer: cartSummary.artikelnummer,
+    stueckzahl: cartSummary.stueckzahl,
+    notizen: extras.join(' '),
+    website: honeypot ? honeypot.value : ''
+  };
+
+  var btn = ev.target.querySelector('button[type="submit"]');
+  var originalText = btn ? btn.textContent : '';
+  if(btn){ btn.disabled = true; btn.textContent = 'Wird gesendet…'; }
+
+  fetch('/anfrage.php', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify(payload)
+  }).then(function(res){
+    return res.json().catch(function(){ return {}; }).then(function(json){ return {ok: res.ok, json: json}; });
+  }).then(function(result){
+    if(result.ok && result.json && result.json.ok){
+      document.getElementById('success-panel').classList.add('show');
+      cart = [];
+      updateCartBadge();
+      renderCart();
+    } else {
+      alert('Die Anfrage konnte nicht gesendet werden. Bitte versuchen Sie es erneut oder schreiben Sie uns direkt an office@itecka.com.');
+    }
+  }).catch(function(){
+    alert('Die Anfrage konnte nicht gesendet werden (keine Verbindung). Bitte versuchen Sie es erneut oder schreiben Sie uns direkt an office@itecka.com.');
+  }).finally(function(){
+    if(btn){ btn.disabled = false; btn.textContent = originalText; }
+  });
+
   return false;
 }
 function resetForm(){
