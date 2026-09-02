@@ -1335,6 +1335,7 @@ function submitForm(ev){
       cart = [];
       updateCartBadge();
       renderCart();
+      window.scrollTo({top:0, behavior:'smooth'});
     } else {
       alert('Die Anfrage konnte nicht gesendet werden. Bitte versuchen Sie es erneut oder schreiben Sie uns direkt an office@itecka.com.');
     }
