@@ -1288,6 +1288,9 @@ function go(id, slug){
   if(id === 'request'){
     renderCart();
   }
+  if(id === 'products'){
+    applyProductVisibility();
+  }
   document.querySelectorAll('.page').forEach(function(p){ p.classList.remove('active'); });
   var target = document.getElementById('page-' + id) || document.getElementById('page-home');
   target.classList.add('active');
@@ -1545,8 +1548,11 @@ function productCardHtml(p, opts){
   '</div>';
 }
 function currentFilteredProducts(){
-  var active = Array.prototype.slice.call(document.querySelectorAll('.filters .filter-check.on[data-filtermatch]'));
-  var patterns = active.map(function(el){ return new RegExp(el.getAttribute('data-filtermatch'), 'i'); });
+  var groups = Array.prototype.slice.call(document.querySelectorAll('.filters .filter-group'));
+  var groupPatterns = groups.map(function(g){
+    var active = Array.prototype.slice.call(g.querySelectorAll('.filter-check.on[data-filtermatch]'));
+    return active.map(function(el){ return new RegExp(el.getAttribute('data-filtermatch'), 'i'); });
+  }).filter(function(patterns){ return patterns.length > 0; });
   var searchInput = document.getElementById('filter-search');
   var searchTerm = searchInput ? searchInput.value.trim() : '';
   var results = PRODUCTS.filter(function(p){
@@ -1559,12 +1565,12 @@ function currentFilteredProducts(){
       catOK = p.cat === currentCategory;
     }
     if(!catOK) return false;
-    if(patterns.length > 0){
-      var featOK = patterns.every(function(re){
+    var featOK = groupPatterns.every(function(patterns){
+      return patterns.some(function(re){
         return p.badges.some(function(txt){ return re.test(txt); });
       });
-      if(!featOK) return false;
-    }
+    });
+    if(!featOK) return false;
     if(searchTerm && matchScore(p, searchTerm) <= 0) return false;
     return true;
   });
