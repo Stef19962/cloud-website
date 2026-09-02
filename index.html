@@ -116,7 +116,13 @@ a:focus-visible, button:focus-visible, [tabindex]:focus-visible{outline:2px soli
 @media (prefers-reduced-motion: reduce){.brand-spark{animation:none; display:none;}}
 .brand span{font-family:'Archivo',sans-serif; font-weight:800; font-size:20px; color:var(--ink);}
 .nav-links{display:none;}
-.nav-links a{color:var(--ink);}
+.nav-links a{color:var(--ink); font-size:14.5px; font-weight:600; cursor:pointer;}
+.nav-links a:hover{color:var(--link);}
+@media (min-width:860px){
+  .nav-links{display:flex; align-items:center; gap:28px;}
+  .menu-btn{display:none;}
+  .mobile-nav{display:none !important;}
+}
 .cart-btn{position:relative; cursor:pointer; background:none; border:none; padding:0; display:flex;}
 .cart-count{position:absolute; top:-6px; right:-8px; background:var(--accent); color:var(--accent-ink); font-size:11px; font-weight:700; width:17px; height:17px; border-radius:50%; display:flex; align-items:center; justify-content:center;}
 
@@ -253,6 +259,7 @@ table.varianten td{font-size:13px; padding:11px 12px; border-bottom:1px solid va
 
 /* Mobile nav */
 .menu-btn{display:flex; background:none; border:none; padding:4px; cursor:pointer;}
+@media (min-width:860px){ .menu-btn{display:none;} .mobile-nav{display:none !important;} }
 .mobile-nav{display:none; flex-direction:column; gap:2px; padding:10px 20px 16px; background:var(--surface); border-bottom:1px solid var(--line);}
 .mobile-nav a{padding:10px 4px; font-size:15px; color:var(--ink); border-bottom:1px solid var(--line);}
 .mobile-nav a:last-child{border-bottom:none;}
