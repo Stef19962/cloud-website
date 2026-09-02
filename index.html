@@ -452,22 +452,22 @@ table.varianten td{font-size:13px; padding:11px 12px; border-bottom:1px solid va
         <div class="filter-hr"></div>
         <div class="filter-group">
           <p class="filter-label">Schutzart (IP)</p>
-          <div class="filter-row"><div class="filter-check"></div>IP20</div>
-          <div class="filter-row"><div class="filter-check"></div>IP40</div>
-          <div class="filter-row"><div class="filter-check"></div>IP54</div>
-          <div class="filter-row"><div class="filter-check"></div>IP65+</div>
+          <div class="filter-row" style="cursor:pointer;" onclick="toggleFilterCheck(this)"><div class="filter-check" data-filtermatch="IP20"></div>IP20</div>
+          <div class="filter-row" style="cursor:pointer;" onclick="toggleFilterCheck(this)"><div class="filter-check" data-filtermatch="IP40"></div>IP40</div>
+          <div class="filter-row" style="cursor:pointer;" onclick="toggleFilterCheck(this)"><div class="filter-check" data-filtermatch="IP54"></div>IP54</div>
+          <div class="filter-row" style="cursor:pointer;" onclick="toggleFilterCheck(this)"><div class="filter-check" data-filtermatch="IP65|IP66"></div>IP65+</div>
         </div>
         <div class="filter-hr"></div>
         <div class="filter-group">
           <p class="filter-label">Ausstattung</p>
-          <div class="filter-row"><div class="filter-check"></div>Dimmbar</div>
-          <div class="filter-row"><div class="filter-check"></div>DALI</div>
+          <div class="filter-row" style="cursor:pointer;" onclick="toggleFilterCheck(this)"><div class="filter-check" data-filtermatch="dimmbar"></div>Dimmbar</div>
+          <div class="filter-row" style="cursor:pointer;" onclick="toggleFilterCheck(this)"><div class="filter-check" data-filtermatch="DALI"></div>DALI</div>
         </div>
         <div class="filter-hr"></div>
         <div class="filter-group">
           <p class="filter-label">Status</p>
-          <div class="filter-row"><div class="filter-check"></div>Neu</div>
-          <div class="filter-row"><div class="filter-check"></div>Aktuell</div>
+          <div class="filter-row" style="cursor:pointer;" onclick="toggleFilterCheck(this)"><div class="filter-check" data-filtermatch="^Neu$"></div>Neu</div>
+          <div class="filter-row" style="cursor:pointer;" onclick="toggleFilterCheck(this)"><div class="filter-check" data-filtermatch="^Aktuell$"></div>Aktuell</div>
         </div>
       </aside>
 
@@ -1275,14 +1275,12 @@ var CATS = {
   industrie: {name:'Industrie, Gewerbe & Feuchtraum', total:5},
   aussen: {name:'Außenbereich', total:12}
 };
+var currentCategory = 'buero';
 function applyCategory(cat){
   var meta = CATS[cat];
   if(!meta) return;
-  document.querySelectorAll('#page-products [data-cat]').forEach(function(el){
-    el.style.display = (el.getAttribute('data-cat') === cat) ? '' : 'none';
-  });
+  currentCategory = cat;
   document.getElementById('pd-cat-name').textContent = meta.name;
-  document.getElementById('pd-count').textContent = meta.total + ' Produkte';
   document.getElementById('pd-chip').textContent = meta.name + ' ×';
   document.getElementById('pd-crumb-cat').textContent = '/ ' + meta.name;
   document.querySelectorAll('.filter-check[data-filtercat]').forEach(function(el){
@@ -1291,10 +1289,35 @@ function applyCategory(cat){
   document.querySelectorAll('.cat-chip[data-chipcat]').forEach(function(el){
     el.classList.toggle('active', el.getAttribute('data-chipcat') === cat);
   });
+  applyProductVisibility();
 }
 function goCategory(cat){
   applyCategory(cat);
   go('products');
+}
+function toggleFilterCheck(rowEl){
+  var check = rowEl.querySelector('.filter-check');
+  if(check) check.classList.toggle('on');
+  applyProductVisibility();
+}
+function applyProductVisibility(){
+  var active = Array.prototype.slice.call(document.querySelectorAll('.filters .filter-check.on[data-filtermatch]'));
+  var patterns = active.map(function(el){ return new RegExp(el.getAttribute('data-filtermatch'), 'i'); });
+  var count = 0;
+  document.querySelectorAll('#page-products [data-cat]').forEach(function(card){
+    var catOK = card.getAttribute('data-cat') === currentCategory;
+    var featOK = true;
+    if(catOK && patterns.length > 0){
+      var badges = Array.prototype.map.call(card.querySelectorAll('.badge'), function(b){ return b.textContent.trim(); });
+      featOK = patterns.every(function(re){
+        return badges.some(function(txt){ return re.test(txt); });
+      });
+    }
+    var show = catOK && featOK;
+    card.style.display = show ? '' : 'none';
+    if(show) count++;
+  });
+  document.getElementById('pd-count').textContent = count + ' Produkte';
 }
 function pickVariant(btn, label, watt, price){
   document.querySelectorAll('.variant-pill').forEach(function(el){ el.classList.remove('active'); });
