@@ -194,17 +194,6 @@ table.varianten{border-collapse:collapse; width:100%;}
 table.varianten th{text-align:left; font-size:11px; text-transform:uppercase; letter-spacing:0.03em; color:var(--muted-2); font-weight:600; padding:10px 12px; border-bottom:1.5px solid var(--line); background:var(--bg);}
 table.varianten td{font-size:13px; padding:11px 12px; border-bottom:1px solid var(--line); color:var(--ink);}
 .table-wrap{overflow-x:auto; border-radius:14px; border:1px solid var(--line);}
-@media (max-width:700px){
-  table.varianten, table.varianten tbody{display:block; width:100%;}
-  table.varianten tr{display:block; padding:12px 14px; border-bottom:1px solid var(--line);}
-  table.varianten tr:first-child{display:none;}
-  table.varianten tr:last-child{border-bottom:none;}
-  table.varianten td{display:flex; justify-content:space-between; gap:14px; padding:4px 0; border-bottom:none; font-size:13px;}
-  table.varianten td::before{content:attr(data-label); font-size:11px; text-transform:uppercase; letter-spacing:0.03em; color:var(--muted-2); font-weight:600; flex-shrink:0;}
-  table.varianten td:first-child{font-weight:700; padding-bottom:8px;}
-  table.varianten td:first-child::before{content:none;}
-  table.varianten td:last-child{font-weight:700; padding-top:8px;}
-}
 
 /* Kalkulator */
 .calc-box{background:var(--dark-bg); border-radius:16px; padding:30px; display:flex; gap:36px; flex-wrap:wrap;}
@@ -453,6 +442,11 @@ table.varianten td{font-size:13px; padding:11px 12px; border-bottom:1px solid va
 
     <div style="display:flex; gap:30px; align-items:flex-start; padding-bottom:60px;">
       <aside class="filters">
+        <div class="filter-group">
+          <p class="filter-label">Suche</p>
+          <input type="text" id="filter-search" placeholder="z. B. 4000K, 600×600, xFlex &hellip;" oninput="applyProductVisibility()" style="width:100%; box-sizing:border-box; padding:9px 11px; border-radius:8px; border:1.5px solid var(--line); background:var(--surface); color:var(--ink); font-family:inherit; font-size:13px; outline:none;">
+        </div>
+        <div class="filter-hr"></div>
         <div class="filter-group">
           <p class="filter-label">Kategorie</p>
           <div class="filter-row" style="cursor:pointer;" onclick="goCategory('buero')"><div class="filter-check on" data-filtercat="buero"></div>Büro &amp; Innenbereich</div>
@@ -1311,20 +1305,33 @@ function toggleFilterCheck(rowEl){
   if(check) check.classList.toggle('on');
   applyProductVisibility();
 }
+function normSearch(s){
+  return String(s).toLowerCase().replace(/×/g, 'x').replace(/\s+/g, '');
+}
 function applyProductVisibility(){
   var active = Array.prototype.slice.call(document.querySelectorAll('.filters .filter-check.on[data-filtermatch]'));
   var patterns = active.map(function(el){ return new RegExp(el.getAttribute('data-filtermatch'), 'i'); });
+  var searchInput = document.getElementById('filter-search');
+  var searchTerm = searchInput ? normSearch(searchInput.value.trim()) : '';
   var count = 0;
   document.querySelectorAll('#page-products [data-cat]').forEach(function(card){
     var catOK = card.getAttribute('data-cat') === currentCategory;
     var featOK = true;
+    var searchOK = true;
     if(catOK && patterns.length > 0){
       var badges = Array.prototype.map.call(card.querySelectorAll('.badge'), function(b){ return b.textContent.trim(); });
       featOK = patterns.every(function(re){
         return badges.some(function(txt){ return re.test(txt); });
       });
     }
-    var show = catOK && featOK;
+    if(catOK && featOK && searchTerm){
+      var p = PRODUCTS_BY_SLUG[card.getAttribute('data-slug')];
+      var haystack = normSearch(p ? p.name + ' ' + p.desc + ' ' + p.variants.map(function(v){
+        return v.lichtfarbe + ' ' + v.dims + ' ' + v.schaltung + ' ' + v.art;
+      }).join(' ') : '');
+      searchOK = haystack.indexOf(searchTerm) !== -1;
+    }
+    var show = catOK && featOK && searchOK;
     card.style.display = show ? '' : 'none';
     if(show) count++;
   });
@@ -1380,7 +1387,7 @@ function escHtml(s){
 
 function variantShortLabel(v){
   var top = (v.dims && v.dims !== '–' && v.dims !== 'auf Anfrage') ? v.dims : v.leistung;
-  var bottom = v.leistung + ' &middot; ' + v.lichtfarbe + (v.schaltung && v.schaltung !== 'on/off' ? ' &middot; ' + escHtml(v.schaltung) : '') + ' &middot; &euro; ' + v.price;
+  var bottom = v.leistung + ' &middot; ' + v.lichtfarbe + ' &middot; &euro; ' + v.price;
   return {top: escHtml(top), bottom: bottom};
 }
 
@@ -1410,7 +1417,7 @@ function renderDetail(slug){
   }).join('');
 
   var rowsHtml = p.variants.map(function(v){
-    return '<tr><td data-label="Type">' + escHtml(p.name) + '</td><td data-label="Schaltung">' + escHtml(v.schaltung) + '</td><td data-label="Lichtstrom">' + escHtml(v.lichtstrom) + '</td><td data-label="Leistung">' + escHtml(v.leistung) + '</td><td data-label="lm/W">' + escHtml(v.lmw) + '</td><td data-label="Lichtfarbe">' + escHtml(v.lichtfarbe) + '</td><td data-label="L×B×H mm">' + escHtml(v.dims) + '</td><td data-label="Artikelnummer" style="font-family:monospace; font-size:11.5px;">' + escHtml(v.art) + '</td><td data-label="Gar.">' + escHtml(v.gar) + '</td><td data-label="Brutto €">&euro; ' + v.price + '</td></tr>';
+    return '<tr><td>' + escHtml(p.name) + '</td><td>' + escHtml(v.schaltung) + '</td><td>' + escHtml(v.lichtstrom) + '</td><td>' + escHtml(v.leistung) + '</td><td>' + escHtml(v.lmw) + '</td><td>' + escHtml(v.lichtfarbe) + '</td><td>' + escHtml(v.dims) + '</td><td style="font-family:monospace; font-size:11.5px;">' + escHtml(v.art) + '</td><td>' + escHtml(v.gar) + '</td><td>&euro; ' + v.price + '</td></tr>';
   }).join('');
   document.getElementById('pd-variant-table').innerHTML = '<tr><th>Type</th><th>Schaltung</th><th>Lichtstrom</th><th>Leistung</th><th>lm/W</th><th>Lichtfarbe</th><th>L&times;B&times;H mm</th><th>Artikelnummer</th><th>Gar.</th><th>Brutto &euro;</th></tr>' + rowsHtml;
 
