@@ -495,10 +495,10 @@ table.varianten td{font-size:13px; padding:11px 12px; border-bottom:1px solid va
         <div class="filter-hr"></div>
         <div class="filter-group">
           <p class="filter-label">Schutzart (IP)</p>
-          <div class="filter-row" style="cursor:pointer;" onclick="toggleFilterCheck(this)"><div class="filter-check" data-filtermatch="IP20"></div>IP20</div>
-          <div class="filter-row" style="cursor:pointer;" onclick="toggleFilterCheck(this)"><div class="filter-check" data-filtermatch="IP40"></div>IP40</div>
-          <div class="filter-row" style="cursor:pointer;" onclick="toggleFilterCheck(this)"><div class="filter-check" data-filtermatch="IP54"></div>IP54</div>
-          <div class="filter-row" style="cursor:pointer;" onclick="toggleFilterCheck(this)"><div class="filter-check" data-filtermatch="IP65|IP66"></div>IP65+</div>
+          <div class="filter-row" style="cursor:pointer;" onclick="toggleFilterCheck(this)"><div class="filter-check" data-filtermatch="IP20-30"></div>IP20</div>
+          <div class="filter-row" style="cursor:pointer;" onclick="toggleFilterCheck(this)"><div class="filter-check" data-filtermatch="IP40-53"></div>IP40</div>
+          <div class="filter-row" style="cursor:pointer;" onclick="toggleFilterCheck(this)"><div class="filter-check" data-filtermatch="IP54-64"></div>IP54</div>
+          <div class="filter-row" style="cursor:pointer;" onclick="toggleFilterCheck(this)"><div class="filter-check" data-filtermatch="IP65-9999"></div>IP65+</div>
         </div>
         <div class="filter-hr"></div>
         <div class="filter-group">
@@ -1547,12 +1547,30 @@ function productCardHtml(p, opts){
     '</div>' +
   '</div>';
 }
+function extractIpNumber(text){
+  var norm = String(text).toUpperCase().replace(/[\s-]/g, '');
+  var m = /IP(\d{2,3})/.exec(norm);
+  return m ? parseInt(m[1], 10) : null;
+}
+function buildFilterMatcher(pattern){
+  var ipRange = /^IP(\d{2,3})-(\d{2,4})$/i.exec(pattern);
+  if(ipRange){
+    var min = parseInt(ipRange[1], 10);
+    var max = parseInt(ipRange[2], 10);
+    return function(txt){
+      var n = extractIpNumber(txt);
+      return n !== null && n >= min && n <= max;
+    };
+  }
+  var re = new RegExp(pattern, 'i');
+  return function(txt){ return re.test(txt); };
+}
 function currentFilteredProducts(){
   var groups = Array.prototype.slice.call(document.querySelectorAll('.filters .filter-group'));
-  var groupPatterns = groups.map(function(g){
+  var groupMatchers = groups.map(function(g){
     var active = Array.prototype.slice.call(g.querySelectorAll('.filter-check.on[data-filtermatch]'));
-    return active.map(function(el){ return new RegExp(el.getAttribute('data-filtermatch'), 'i'); });
-  }).filter(function(patterns){ return patterns.length > 0; });
+    return active.map(function(el){ return buildFilterMatcher(el.getAttribute('data-filtermatch')); });
+  }).filter(function(matchers){ return matchers.length > 0; });
   var searchInput = document.getElementById('filter-search');
   var searchTerm = searchInput ? searchInput.value.trim() : '';
   var results = PRODUCTS.filter(function(p){
@@ -1565,9 +1583,9 @@ function currentFilteredProducts(){
       catOK = p.cat === currentCategory;
     }
     if(!catOK) return false;
-    var featOK = groupPatterns.every(function(patterns){
-      return patterns.some(function(re){
-        return p.badges.some(function(txt){ return re.test(txt); });
+    var featOK = groupMatchers.every(function(matchers){
+      return matchers.some(function(matchFn){
+        return p.badges.some(function(txt){ return matchFn(txt); });
       });
     });
     if(!featOK) return false;
