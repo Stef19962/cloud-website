@@ -474,7 +474,7 @@ table.varianten td{font-size:13px; padding:11px 12px; border-bottom:1px solid va
     <p class="crumb"><a onclick="go('home')">Startseite</a> / Produkte <span id="pd-crumb-cat"></span></p>
     <div style="display:flex; align-items:baseline; justify-content:space-between; padding:14px 0 22px;">
       <h1 style="font-size:29px;" id="pd-title">Produkte</h1>
-      <p style="font-size:14px; color:var(--muted);"><span id="pd-count">8 Produkte</span> &middot; <span id="pd-cat-name">Büro &amp; Innenbereich</span></p>
+      <p style="font-size:14px; color:var(--muted);"><span id="pd-count">25 Produkte</span> &middot; <span id="pd-cat-name">Alle Produkte</span></p>
     </div>
 
     <div style="display:flex; gap:30px; align-items:flex-start; padding-bottom:60px;">
@@ -486,8 +486,8 @@ table.varianten td{font-size:13px; padding:11px 12px; border-bottom:1px solid va
         <div class="filter-hr"></div>
         <div class="filter-group">
           <p class="filter-label">Kategorie</p>
-          <div class="filter-row" style="cursor:pointer;" onclick="goCategory('alle')"><div class="filter-check" data-filtercat="alle"></div>Alle Produkte</div>
-          <div class="filter-row" style="cursor:pointer;" onclick="goCategory('buero')"><div class="filter-check on" data-filtercat="buero"></div>Büro &amp; Innenbereich</div>
+          <div class="filter-row" style="cursor:pointer;" onclick="goCategory('alle')"><div class="filter-check on" data-filtercat="alle"></div>Alle Produkte</div>
+          <div class="filter-row" style="cursor:pointer;" onclick="goCategory('buero')"><div class="filter-check" data-filtercat="buero"></div>Büro &amp; Innenbereich</div>
           <div class="filter-row" style="cursor:pointer;" onclick="goCategory('industrie')"><div class="filter-check" data-filtercat="industrie"></div>Industrie &amp; Gewerbe</div>
           <div class="filter-row" style="cursor:pointer;" onclick="goCategory('industrie')"><div class="filter-check" data-filtercat="industrie"></div>Feuchtraum</div>
           <div class="filter-row" style="cursor:pointer;" onclick="goCategory('aussen')"><div class="filter-check" data-filtercat="aussen"></div>Außenbereich</div>
@@ -516,8 +516,8 @@ table.varianten td{font-size:13px; padding:11px 12px; border-bottom:1px solid va
 
       <div style="flex:1; min-width:0;">
         <div class="cat-chips">
-          <button type="button" class="cat-chip" data-chipcat="alle" onclick="goCategory('alle')">Alle Produkte</button>
-          <button type="button" class="cat-chip active" data-chipcat="buero" onclick="goCategory('buero')">Büro &amp; Innenbereich</button>
+          <button type="button" class="cat-chip active" data-chipcat="alle" onclick="goCategory('alle')">Alle Produkte</button>
+          <button type="button" class="cat-chip" data-chipcat="buero" onclick="goCategory('buero')">Büro &amp; Innenbereich</button>
           <button type="button" class="cat-chip" data-chipcat="industrie" onclick="goCategory('industrie')">Industrie &amp; Gewerbe</button>
           <button type="button" class="cat-chip" data-chipcat="aussen" onclick="goCategory('aussen')">Außenbereich</button>
         </div>
@@ -1411,11 +1411,11 @@ var BEREICH_SYNONYMS = {
   'halle':'innen', 'industrie':'innen', 'gewerbe':'innen', 'lager':'innen', 'produktion':'innen',
   'bad':'innen', 'feuchtraum':'innen', 'keller':'innen', 'werkstatt':'innen'
 };
-var currentCategory = 'buero';
+var currentCategory = 'alle';
 var currentBereichFilter = null;
 function applyCategory(cat){
   var meta = CATS[cat];
-  if(!meta) cat = 'buero', meta = CATS.buero;
+  if(!meta) cat = 'alle', meta = CATS.alle;
   currentCategory = cat;
   document.querySelectorAll('.filter-check[data-filtercat]').forEach(function(el){
     el.classList.toggle('on', el.getAttribute('data-filtercat') === cat);
@@ -1689,7 +1689,7 @@ function applyState(state){
     el.classList.toggle('on', activeFiltSet.indexOf(el.getAttribute('data-filtermatch')) !== -1);
   });
   if(state.page === 'products'){
-    applyCategory(state.cat || 'buero');
+    applyCategory(state.cat || 'alle');
   }
   go(state.page, state.slug);
   suppressHistoryPush = false;
