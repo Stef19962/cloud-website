@@ -144,8 +144,17 @@ main{max-width:1240px; margin:0 auto; padding:0 20px;}
 .hero > *{position:relative; z-index:1;}
 .hero h1{font-size:27px; line-height:1.12; max-width:760px;}
 .hero p{font-size:17px; color:var(--muted); max-width:620px; line-height:1.55;}
+.search-wrap{position:relative; width:100%;}
 .search{display:flex; align-items:center; width:100%; max-width:100%; background:var(--surface); border:1.5px solid var(--line); border-radius:10px; padding:6px 6px 6px 16px; margin-top:6px;}
 .search input{flex:1; border:none; outline:none; font-size:15px; padding:9px 10px; background:transparent; color:var(--ink); font-family:inherit;}
+.home-suggestions{position:fixed; background:var(--surface); border:1.5px solid var(--line); border-radius:10px; box-shadow:0 12px 28px rgba(0,0,0,0.35); overflow:hidden; z-index:200;}
+.home-suggestions .sugg-row{display:flex; align-items:center; justify-content:space-between; gap:10px; padding:11px 16px; cursor:pointer; font-size:13.5px; color:var(--ink); border-bottom:1px solid var(--line);}
+.home-suggestions .sugg-row:last-child{border-bottom:none;}
+.home-suggestions .sugg-row:hover{background:var(--bg);}
+.home-suggestions .sugg-meta{font-size:11.5px; color:var(--muted-2); flex-shrink:0;}
+.no-results{padding:40px 24px; text-align:center; border:1.5px dashed var(--line); border-radius:14px;}
+.no-results p{font-size:14.5px; color:var(--muted); line-height:1.6; margin-bottom:16px;}
+.no-results .nr-actions{display:flex; gap:10px; flex-wrap:wrap; justify-content:center;}
 
 .grid-3{display:grid; grid-template-columns:1fr; gap:14px;}
 .grid-4{display:grid; grid-template-columns:1fr 1fr; gap:12px;}
@@ -319,10 +328,18 @@ table.varianten td{font-size:13px; padding:11px 12px; border-bottom:1px solid va
       <span class="badge badge-tech">B2B &middot; Österreich &middot; Industriebeleuchtung</span>
       <h1>Ihr Partner für hochwertige Industriebeleuchtung</h1>
       <p>Von der ersten Planung bis zur fachgerechten Montage durch unser eigenes Team &ndash; maßgeschneiderte Lichtlösungen für Gewerbe, Industrie und öffentliche Auftraggeber.</p>
-      <div class="search">
-        <svg width="18" height="18" viewBox="0 0 20 20" fill="none"><circle cx="9" cy="9" r="6.5" stroke="var(--muted-2)" stroke-width="1.6"/><path d="M17.5 17.5L14 14" stroke="var(--muted-2)" stroke-width="1.6" stroke-linecap="round"/></svg>
-        <input type="text" placeholder="z. B. Feuchtraumleuchte, DALI, IP65 &hellip;">
-        <button class="btn btn-primary" onclick="go('products')">Suchen</button>
+      <div class="search-wrap">
+        <div class="search">
+          <svg width="18" height="18" viewBox="0 0 20 20" fill="none"><circle cx="9" cy="9" r="6.5" stroke="var(--muted-2)" stroke-width="1.6"/><path d="M17.5 17.5L14 14" stroke="var(--muted-2)" stroke-width="1.6" stroke-linecap="round"/></svg>
+          <input type="text" id="home-search-input" placeholder="Artikelnummer, Produkt oder Einsatzbereich suchen &hellip;" autocomplete="off" oninput="renderHomeSuggestions()" onkeydown="if(event.key==='Enter'){event.preventDefault(); submitHomeSearch();} if(event.key==='Escape'){hideHomeSuggestions();}" onblur="setTimeout(hideHomeSuggestions, 150)">
+          <button class="btn btn-primary" onclick="submitHomeSearch()">Suchen</button>
+        </div>
+        <div id="home-suggestions" class="home-suggestions" hidden></div>
+      </div>
+      <div id="home-quickfilters" style="display:flex; gap:10px; margin-top:14px; flex-wrap:wrap;">
+        <button type="button" class="btn btn-outline" onclick="runGlobalSearch('', 'innen')">Innenbereich</button>
+        <button type="button" class="btn btn-outline" onclick="runGlobalSearch('', 'aussen')">Außenbereich</button>
+        <button type="button" class="btn btn-outline" onclick="runGlobalSearch('', null)">Alle Produkte</button>
       </div>
     </div>
 
@@ -449,6 +466,7 @@ table.varianten td{font-size:13px; padding:11px 12px; border-bottom:1px solid va
         <div class="filter-hr"></div>
         <div class="filter-group">
           <p class="filter-label">Kategorie</p>
+          <div class="filter-row" style="cursor:pointer;" onclick="goCategory('alle')"><div class="filter-check" data-filtercat="alle"></div>Alle Produkte</div>
           <div class="filter-row" style="cursor:pointer;" onclick="goCategory('buero')"><div class="filter-check on" data-filtercat="buero"></div>Büro &amp; Innenbereich</div>
           <div class="filter-row" style="cursor:pointer;" onclick="goCategory('industrie')"><div class="filter-check" data-filtercat="industrie"></div>Industrie &amp; Gewerbe</div>
           <div class="filter-row" style="cursor:pointer;" onclick="goCategory('industrie')"><div class="filter-check" data-filtercat="industrie"></div>Feuchtraum</div>
@@ -478,6 +496,7 @@ table.varianten td{font-size:13px; padding:11px 12px; border-bottom:1px solid va
 
       <div style="flex:1;">
         <div class="cat-chips">
+          <button type="button" class="cat-chip" data-chipcat="alle" onclick="goCategory('alle')">Alle Produkte</button>
           <button type="button" class="cat-chip active" data-chipcat="buero" onclick="goCategory('buero')">Büro &amp; Innenbereich</button>
           <button type="button" class="cat-chip" data-chipcat="industrie" onclick="goCategory('industrie')">Industrie &amp; Gewerbe</button>
           <button type="button" class="cat-chip" data-chipcat="aussen" onclick="goCategory('aussen')">Außenbereich</button>
@@ -936,7 +955,7 @@ table.varianten td{font-size:13px; padding:11px 12px; border-bottom:1px solid va
               </div>
       <div class="pd-info">
         <span class="badge badge-tech" style="align-self:flex-start;">ITECKA &middot; Aktuell</span>
-        <h1 id="pd-title" style="font-size:32px;"></h1>
+        <h1 id="pd-detail-title" style="font-size:32px;"></h1>
         <div class="rating" style="margin-top:-6px;"><svg width="14" height="14" viewBox="0 0 20 20" fill="none"><path d="M10 1.6l2.5 5.2 5.7.8-4.1 4 1 5.7-5.1-2.7-5.1 2.7 1-5.7-4.1-4 5.7-.8z" stroke="var(--muted-2)" stroke-width="1.2"/></svg><span style="font-size:12.5px; color:var(--muted-2); margin-left:4px;">Noch keine Bewertungen</span></div>
         <p id="pd-desc" style="font-size:15px; color:var(--muted); line-height:1.6; max-width:580px;"></p>
         <div id="pd-badges" style="display:flex; gap:8px; flex-wrap:wrap;"></div>
@@ -1236,8 +1255,10 @@ function closeMenuAnd(fn){
   closeMenu();
   fn();
 }
+var suppressHistoryPush = false;
 function go(id, slug){
   closeMenu();
+  if(!suppressHistoryPush) saveScrollToCurrentEntry();
   if(id === 'detail'){
     if(!slug) slug = currentDetailSlug || (PRODUCTS[0] && PRODUCTS[0].slug);
     renderDetail(slug);
@@ -1246,9 +1267,12 @@ function go(id, slug){
     renderCart();
   }
   document.querySelectorAll('.page').forEach(function(p){ p.classList.remove('active'); });
-  document.getElementById('page-' + id).classList.add('active');
-  window.scrollTo({top:0, behavior:'auto'});
-  try{ history.replaceState(null, '', '#' + id); }catch(e){}
+  var target = document.getElementById('page-' + id) || document.getElementById('page-home');
+  target.classList.add('active');
+  if(!suppressHistoryPush){
+    pushHistoryState();
+    window.scrollTo({top:0, behavior:'auto'});
+  }
 }
 function submitForm(ev){
   ev.preventDefault();
@@ -1276,18 +1300,26 @@ function submitNewsletterBanner(ev){
   return false;
 }
 var CATS = {
-  buero: {name:'Büro & Innenbereich', total:8},
-  industrie: {name:'Industrie, Gewerbe & Feuchtraum', total:5},
-  aussen: {name:'Außenbereich', total:12}
+  buero: {name:'Büro & Innenbereich', bereich:'innen'},
+  industrie: {name:'Industrie, Gewerbe & Feuchtraum', bereich:'innen'},
+  aussen: {name:'Außenbereich', bereich:'aussen'},
+  alle: {name:'Alle Produkte', bereich:null}
+};
+var BEREICH_LABEL = {innen:'Innenbereich', aussen:'Außenbereich'};
+var BEREICH_SYNONYMS = {
+  'außen':'aussen', 'aussen':'aussen', 'außenbereich':'aussen', 'aussenbereich':'aussen',
+  'outdoor':'aussen', 'draußen':'aussen', 'drausen':'aussen', 'terrasse':'aussen', 'garten':'aussen',
+  'hof':'aussen', 'straße':'aussen', 'strasse':'aussen', 'parkplatz':'aussen', 'fassade':'aussen', 'weg':'aussen',
+  'innen':'innen', 'innenbereich':'innen', 'büro':'innen', 'buero':'innen', 'office':'innen',
+  'halle':'innen', 'industrie':'innen', 'gewerbe':'innen', 'lager':'innen', 'produktion':'innen',
+  'bad':'innen', 'feuchtraum':'innen', 'keller':'innen', 'werkstatt':'innen'
 };
 var currentCategory = 'buero';
+var currentBereichFilter = null;
 function applyCategory(cat){
   var meta = CATS[cat];
-  if(!meta) return;
+  if(!meta) cat = 'buero', meta = CATS.buero;
   currentCategory = cat;
-  document.getElementById('pd-cat-name').textContent = meta.name;
-  document.getElementById('pd-chip').textContent = meta.name + ' ×';
-  document.getElementById('pd-crumb-cat').textContent = '/ ' + meta.name;
   document.querySelectorAll('.filter-check[data-filtercat]').forEach(function(el){
     el.classList.toggle('on', el.getAttribute('data-filtercat') === cat);
   });
@@ -1297,6 +1329,7 @@ function applyCategory(cat){
   applyProductVisibility();
 }
 function goCategory(cat){
+  currentBereichFilter = null;
   applyCategory(cat);
   go('products');
 }
@@ -1306,36 +1339,314 @@ function toggleFilterCheck(rowEl){
   applyProductVisibility();
 }
 function normSearch(s){
-  return String(s).toLowerCase().replace(/×/g, 'x').replace(/\s+/g, '');
+  return String(s == null ? '' : s).toLowerCase().replace(/×/g, 'x').replace(/\s+/g, '');
 }
-function applyProductVisibility(){
+function levenshtein(a, b){
+  a = a || ''; b = b || '';
+  var m = a.length, n = b.length;
+  if(m === 0) return n;
+  if(n === 0) return m;
+  var prev = [];
+  for(var j = 0; j <= n; j++) prev[j] = j;
+  for(var i = 1; i <= m; i++){
+    var cur = [i];
+    for(var j2 = 1; j2 <= n; j2++){
+      var cost = a[i-1] === b[j2-1] ? 0 : 1;
+      cur[j2] = Math.min(prev[j2] + 1, cur[j2-1] + 1, prev[j2-1] + cost);
+    }
+    prev = cur;
+  }
+  return prev[n];
+}
+function bereichLabel(cat){
+  var meta = CATS[cat];
+  return meta && meta.bereich ? BEREICH_LABEL[meta.bereich] : '';
+}
+function minPriceOf(p){
+  var min = Infinity;
+  p.variants.forEach(function(v){
+    var n = parseFloat(String(v.price).replace(/\./g,'').replace(',', '.'));
+    if(!isNaN(n) && n < min) min = n;
+  });
+  return min === Infinity ? null : min;
+}
+function matchScore(p, rawTerm){
+  var term = String(rawTerm || '').trim();
+  if(!term) return 1;
+  var termNorm = normSearch(term);
+  var name = normSearch(p.name);
+  var desc = normSearch(p.desc);
+  var catText = normSearch(p.catName + ' ' + bereichLabel(p.cat));
+  var badges = normSearch(p.badges.join(' '));
+  var specs = normSearch(p.variants.map(function(v){ return v.lichtfarbe + ' ' + v.dims + ' ' + v.schaltung; }).join(' '));
+  var score = 0;
+  p.variants.forEach(function(v){
+    var artNorm = normSearch(v.art);
+    if(artNorm === termNorm) score = Math.max(score, 1000);
+    else if(termNorm.length >= 3 && artNorm.indexOf(termNorm) !== -1) score = Math.max(score, 400);
+  });
+  if(name.indexOf(termNorm) !== -1) score = Math.max(score, 300);
+  if(catText.indexOf(termNorm) !== -1) score = Math.max(score, 150);
+  if(badges.indexOf(termNorm) !== -1) score = Math.max(score, 120);
+  if(desc.indexOf(termNorm) !== -1) score = Math.max(score, 100);
+  if(specs.indexOf(termNorm) !== -1) score = Math.max(score, 90);
+  if(score === 0){
+    var words = (p.name + ' ' + p.desc + ' ' + p.catName + ' ' + p.badges.join(' ')).toLowerCase().split(/[^a-zäöüß0-9]+/).filter(Boolean);
+    var termLower = term.toLowerCase();
+    var best = Infinity;
+    words.forEach(function(w){
+      if(Math.abs(w.length - termLower.length) > 3) return;
+      var d = levenshtein(termLower, w);
+      if(d < best) best = d;
+    });
+    var maxDist = termLower.length <= 4 ? 1 : (termLower.length <= 7 ? 2 : 3);
+    if(best <= maxDist) score = Math.max(10, 40 - best * 12);
+  }
+  return score;
+}
+var RATING_STARS_HTML = (function(){
+  var star = '<svg width="12" height="12" viewBox="0 0 20 20" fill="none"><path d="M10 1.6l2.5 5.2 5.7.8-4.1 4 1 5.7L10 14.5l-5.1 2.8 1-5.7-4.1-4 5.7-.8L10 1.6z" stroke="var(--muted-2)" stroke-width="1.3" stroke-linejoin="round"/></svg>';
+  return star + star + star + star + star;
+})();
+function productCardHtml(p, opts){
+  opts = opts || {};
+  var img = IMG_BY_SLUG[p.slug] || '';
+  var min = minPriceOf(p);
+  var priceHtml = min !== null ? 'ab &euro; ' + min.toFixed(2).replace('.', ',') : 'auf Anfrage';
+  var badgesHtml = p.badges.map(function(b){
+    return '<span class="badge' + (b === 'Neu' || b === 'Aktuell' ? ' badge-amber' : '') + '">' + escHtml(b) + '</span>';
+  }).join('');
+  var bereichBadge = opts.showBereich ? '<span class="badge">' + escHtml(bereichLabel(p.cat)) + '</span>' : '';
+  return '' +
+  '<div class="card product-card" data-cat="' + p.cat + '" data-slug="' + p.slug + '" onclick="go(\'detail\',\'' + p.slug + '\')">' +
+    '<img class="ph" style="height:140px; width:100%; object-fit:cover;" src="' + img + '" alt="' + escHtml(p.name) + ' – LED-Leuchte von ITECKA für ' + escHtml(p.catName) + '">' +
+    '<div class="pc-body">' +
+      '<div style="display:flex; gap:6px; flex-wrap:wrap;">' + badgesHtml + bereichBadge + '</div>' +
+      '<p class="name">' + escHtml(p.name) + '</p>' +
+      '<div class="rating">' + RATING_STARS_HTML + '<span class="rating-label">Noch keine Bewertungen</span></div>' +
+      '<p class="meta">ITECKA &middot; ' + escHtml(p.catName) + '</p>' +
+      '<p class="desc">' + escHtml(p.desc) + '</p>' +
+      '<div class="pc-actions">' +
+        '<span style="font-family:\'Archivo\',sans-serif; font-weight:700; font-size:15px;">' + priceHtml + '</span>' +
+        '<div style="display:flex; gap:8px;">' +
+          '<button class="btn btn-outline" onclick="event.stopPropagation(); go(\'detail\',\'' + p.slug + '\')">Details</button>' +
+          '<button class="btn btn-primary" onclick="event.stopPropagation(); go(\'request\')">Anfragen</button>' +
+        '</div>' +
+      '</div>' +
+    '</div>' +
+  '</div>';
+}
+function currentFilteredProducts(){
   var active = Array.prototype.slice.call(document.querySelectorAll('.filters .filter-check.on[data-filtermatch]'));
   var patterns = active.map(function(el){ return new RegExp(el.getAttribute('data-filtermatch'), 'i'); });
   var searchInput = document.getElementById('filter-search');
-  var searchTerm = searchInput ? normSearch(searchInput.value.trim()) : '';
-  var count = 0;
-  document.querySelectorAll('#page-products [data-cat]').forEach(function(card){
-    var catOK = card.getAttribute('data-cat') === currentCategory;
-    var featOK = true;
-    var searchOK = true;
-    if(catOK && patterns.length > 0){
-      var badges = Array.prototype.map.call(card.querySelectorAll('.badge'), function(b){ return b.textContent.trim(); });
-      featOK = patterns.every(function(re){
-        return badges.some(function(txt){ return re.test(txt); });
+  var searchTerm = searchInput ? searchInput.value.trim() : '';
+  var results = PRODUCTS.filter(function(p){
+    var catOK;
+    if(currentCategory === 'alle'){
+      if(currentBereichFilter === 'aussen') catOK = p.cat === 'aussen';
+      else if(currentBereichFilter === 'innen') catOK = p.cat === 'buero' || p.cat === 'industrie';
+      else catOK = true;
+    } else {
+      catOK = p.cat === currentCategory;
+    }
+    if(!catOK) return false;
+    if(patterns.length > 0){
+      var featOK = patterns.every(function(re){
+        return p.badges.some(function(txt){ return re.test(txt); });
       });
+      if(!featOK) return false;
     }
-    if(catOK && featOK && searchTerm){
-      var p = PRODUCTS_BY_SLUG[card.getAttribute('data-slug')];
-      var haystack = normSearch(p ? p.name + ' ' + p.desc + ' ' + p.variants.map(function(v){
-        return v.lichtfarbe + ' ' + v.dims + ' ' + v.schaltung + ' ' + v.art;
-      }).join(' ') : '');
-      searchOK = haystack.indexOf(searchTerm) !== -1;
-    }
-    var show = catOK && featOK && searchOK;
-    card.style.display = show ? '' : 'none';
-    if(show) count++;
+    if(searchTerm && matchScore(p, searchTerm) <= 0) return false;
+    return true;
   });
-  document.getElementById('pd-count').textContent = count + ' Produkte';
+  if(searchTerm){
+    results = results.map(function(p){ return {p:p, score:matchScore(p, searchTerm)}; })
+      .sort(function(a,b){ return b.score - a.score; })
+      .map(function(x){ return x.p; });
+  }
+  return results;
+}
+function applyProductVisibility(){
+  var meta = CATS[currentCategory] || CATS.buero;
+  var searchInput = document.getElementById('filter-search');
+  var searchTerm = searchInput ? searchInput.value.trim() : '';
+  var showBereich = currentCategory === 'alle';
+  var headingName = currentBereichFilter ? BEREICH_LABEL[currentBereichFilter] : meta.name;
+  var results = currentFilteredProducts();
+
+  document.getElementById('pd-cat-name').textContent = searchTerm ? ('Suche: „' + searchTerm + '“') : headingName;
+  document.getElementById('pd-chip').textContent = (searchTerm ? ('Suche: „' + searchTerm + '“') : headingName) + ' ×';
+  document.getElementById('pd-crumb-cat').textContent = '/ ' + headingName;
+  document.getElementById('pd-count').textContent = results.length + ' Produkte';
+
+  var grid = document.querySelector('#page-products .products-grid');
+  if(results.length === 0){
+    grid.innerHTML = '<div class="no-results" style="grid-column:1 / -1;">' +
+      '<p>Wir konnten kein direkt passendes Produkt finden. Prüfen Sie bitte die Artikelnummer oder suchen Sie nach Kategorie, Innenbereich oder Außenbereich.</p>' +
+      '<div class="nr-actions">' +
+        '<button type="button" class="btn btn-outline" onclick="goCategory(\'buero\')">Büro &amp; Innenbereich</button>' +
+        '<button type="button" class="btn btn-outline" onclick="goCategory(\'industrie\')">Industrie &amp; Gewerbe</button>' +
+        '<button type="button" class="btn btn-outline" onclick="goCategory(\'aussen\')">Außenbereich</button>' +
+        '<button type="button" class="btn btn-primary" onclick="go(\'request\')">Anfrage stellen</button>' +
+      '</div>' +
+    '</div>';
+  } else {
+    grid.innerHTML = results.map(function(p){ return productCardHtml(p, {showBereich: showBereich}); }).join('');
+  }
+  syncUrlReplace();
+}
+function stateToUrl(state){
+  var params = new URLSearchParams();
+  params.set('page', state.page || 'home');
+  if(state.cat) params.set('cat', state.cat);
+  if(state.bereich) params.set('bereich', state.bereich);
+  if(state.q) params.set('suche', state.q);
+  if(state.slug) params.set('slug', state.slug);
+  if(state.filt) params.set('filt', state.filt);
+  var qs = params.toString();
+  return qs ? ('?' + qs) : location.pathname;
+}
+function currentStateFromUI(){
+  var activeEl = document.querySelector('.page.active');
+  var pageId = activeEl ? activeEl.id.replace('page-', '') : 'home';
+  var state = {page: pageId};
+  if(pageId === 'products'){
+    state.cat = currentCategory;
+    if(currentBereichFilter) state.bereich = currentBereichFilter;
+    var si = document.getElementById('filter-search');
+    if(si && si.value.trim()) state.q = si.value.trim();
+    var activeFilters = Array.prototype.map.call(
+      document.querySelectorAll('.filters .filter-check.on[data-filtermatch]'),
+      function(el){ return el.getAttribute('data-filtermatch'); }
+    );
+    if(activeFilters.length) state.filt = activeFilters.join(',');
+  }
+  if(pageId === 'detail'){
+    state.slug = currentDetailSlug;
+  }
+  return state;
+}
+function saveScrollToCurrentEntry(){
+  try{
+    var s = Object.assign({}, history.state || {}, {scrollY: window.scrollY});
+    history.replaceState(s, '', location.href);
+  }catch(e){}
+}
+function pushHistoryState(){
+  if(suppressHistoryPush) return;
+  var state = currentStateFromUI();
+  try{ history.pushState(state, '', stateToUrl(state)); }catch(e){}
+}
+function syncUrlReplace(){
+  if(suppressHistoryPush) return;
+  var activeEl = document.querySelector('.page.active');
+  if(!activeEl || activeEl.id !== 'page-products') return;
+  var state = currentStateFromUI();
+  try{ history.replaceState(state, '', stateToUrl(state)); }catch(e){}
+}
+function parseStateFromLocation(){
+  var params = new URLSearchParams(location.search);
+  var page = params.get('page');
+  if(!page){
+    var hash = (location.hash || '').replace('#', '');
+    page = hash || 'home';
+  }
+  var state = {page: page};
+  if(params.get('cat')) state.cat = params.get('cat');
+  if(params.get('bereich')) state.bereich = params.get('bereich');
+  if(params.get('suche')) state.q = params.get('suche');
+  if(params.get('slug')) state.slug = params.get('slug');
+  if(params.get('filt')) state.filt = params.get('filt');
+  return state;
+}
+function applyState(state){
+  if(!state || !document.getElementById('page-' + state.page)) state = {page: 'home'};
+  suppressHistoryPush = true;
+  currentBereichFilter = state.bereich || null;
+  var si = document.getElementById('filter-search');
+  if(si) si.value = state.q || '';
+  var activeFiltSet = state.filt ? state.filt.split(',') : [];
+  document.querySelectorAll('.filters .filter-check[data-filtermatch]').forEach(function(el){
+    el.classList.toggle('on', activeFiltSet.indexOf(el.getAttribute('data-filtermatch')) !== -1);
+  });
+  if(state.page === 'products'){
+    applyCategory(state.cat || 'buero');
+  }
+  go(state.page, state.slug);
+  suppressHistoryPush = false;
+}
+window.addEventListener('popstate', function(e){
+  var state = e.state || parseStateFromLocation();
+  applyState(state);
+  var targetY = (state && typeof state.scrollY === 'number') ? state.scrollY : 0;
+  requestAnimationFrame(function(){
+    requestAnimationFrame(function(){ window.scrollTo({top: targetY, behavior:'auto'}); });
+  });
+});
+function hideHomeSuggestions(){
+  var box = document.getElementById('home-suggestions');
+  if(box){ box.hidden = true; box.innerHTML = ''; }
+  var qf = document.getElementById('home-quickfilters');
+  if(qf) qf.hidden = false;
+}
+function renderHomeSuggestions(){
+  var input = document.getElementById('home-search-input');
+  var box = document.getElementById('home-suggestions');
+  if(!input || !box) return;
+  var term = input.value.trim();
+  if(!term){ hideHomeSuggestions(); return; }
+  var ranked = PRODUCTS.map(function(p){ return {p: p, score: matchScore(p, term)}; })
+    .filter(function(x){ return x.score > 0; })
+    .sort(function(a, b){ return b.score - a.score; })
+    .slice(0, 5);
+  if(ranked.length === 0){ hideHomeSuggestions(); return; }
+  box.innerHTML = ranked.map(function(x){
+    var p = x.p;
+    return '<div class="sugg-row" onmousedown="event.preventDefault(); go(\'detail\',\'' + p.slug + '\')">' +
+      '<span>' + escHtml(p.name) + '</span>' +
+      '<span class="sugg-meta">' + escHtml(bereichLabel(p.cat)) + '</span>' +
+    '</div>';
+  }).join('');
+  var wrapRect = document.querySelector('.search-wrap').getBoundingClientRect();
+  box.style.left = wrapRect.left + 'px';
+  box.style.top = (wrapRect.bottom + 6) + 'px';
+  box.style.width = wrapRect.width + 'px';
+  box.hidden = false;
+  var qf = document.getElementById('home-quickfilters');
+  if(qf) qf.hidden = true;
+}
+function submitHomeSearch(){
+  var input = document.getElementById('home-search-input');
+  var term = input ? input.value.trim() : '';
+  hideHomeSuggestions();
+  runGlobalSearch(term, null);
+}
+function runGlobalSearch(term, bereich){
+  term = (term || '').trim();
+  var bereichKey = bereich;
+  if(!bereichKey && term){
+    var known = BEREICH_SYNONYMS[term.toLowerCase()];
+    if(known){ bereichKey = known; term = ''; }
+  }
+  if(term){
+    var exactArt = null;
+    PRODUCTS.some(function(p){
+      return p.variants.some(function(v){
+        if(normSearch(v.art) === normSearch(term)){ exactArt = p; return true; }
+        return false;
+      });
+    });
+    if(exactArt){
+      go('detail', exactArt.slug);
+      return;
+    }
+  }
+  currentBereichFilter = bereichKey || null;
+  var si = document.getElementById('filter-search');
+  if(si) si.value = term;
+  applyCategory('alle');
+  go('products');
 }
 function pickVariant(btn, label, watt, price){
   document.querySelectorAll('.variant-pill').forEach(function(el){ el.classList.remove('active'); });
@@ -1401,7 +1712,7 @@ function renderDetail(slug){
   catLink.textContent = p.catName;
   catLink.onclick = function(){ goCategory(p.cat); };
   document.getElementById('pd-crumb-name').textContent = p.name;
-  document.getElementById('pd-title').textContent = p.name;
+  document.getElementById('pd-detail-title').textContent = p.name;
   document.getElementById('pd-desc').textContent = p.desc;
   var mainImg = document.getElementById('pd-main-img');
   mainImg.src = IMG_BY_SLUG[slug] || '';
@@ -1568,14 +1879,14 @@ function renderCart(){
   }).join('');
 }
 
+try{ if('scrollRestoration' in history) history.scrollRestoration = 'manual'; }catch(e){}
 buildImgMap();
 updateCartBadge();
-applyCategory('buero');
-(function(){
-  var id = (location.hash || '#home').slice(1);
-  if(!document.getElementById('page-' + id)) id = 'home';
-  go(id);
-})();
+applyState(parseStateFromLocation());
+try{
+  var initState = currentStateFromUI();
+  history.replaceState(initState, '', stateToUrl(initState));
+}catch(e){}
 </script>
 
 <style>
