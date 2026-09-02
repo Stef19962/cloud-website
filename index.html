@@ -492,7 +492,7 @@ table.varianten td{font-size:13px; padding:11px 12px; border-bottom:1px solid va
         </div>
       </aside>
 
-      <div style="flex:1;">
+      <div style="flex:1; min-width:0;">
         <div class="cat-chips">
           <button type="button" class="cat-chip" data-chipcat="alle" onclick="goCategory('alle')">Alle Produkte</button>
           <button type="button" class="cat-chip active" data-chipcat="buero" onclick="goCategory('buero')">Büro &amp; Innenbereich</button>
@@ -1944,7 +1944,7 @@ function renderCart(){
     return '<div class="card cart-item" style="flex-direction:column; align-items:stretch; gap:12px;">' +
       '<div style="display:flex; gap:14px; align-items:center;">' +
         '<img class="thumb" style="width:60px; height:60px; border-radius:8px; object-fit:contain; background:#fff; flex-shrink:0;" src="' + img + '" alt="' + escHtml(p.name) + '">' +
-        '<div style="flex:1;">' +
+        '<div style="flex:1; min-width:0;">' +
           '<p style="font-weight:700; font-size:14px;">' + escHtml(p.name) + '</p>' +
           '<p style="font-size:12px; color:var(--muted-2);">' + escHtml(specParts.join(' · ')) + '</p>' +
         '</div>' +
