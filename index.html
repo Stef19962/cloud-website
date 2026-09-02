@@ -194,6 +194,17 @@ table.varianten{border-collapse:collapse; width:100%;}
 table.varianten th{text-align:left; font-size:11px; text-transform:uppercase; letter-spacing:0.03em; color:var(--muted-2); font-weight:600; padding:10px 12px; border-bottom:1.5px solid var(--line); background:var(--bg);}
 table.varianten td{font-size:13px; padding:11px 12px; border-bottom:1px solid var(--line); color:var(--ink);}
 .table-wrap{overflow-x:auto; border-radius:14px; border:1px solid var(--line);}
+@media (max-width:700px){
+  table.varianten, table.varianten tbody{display:block; width:100%;}
+  table.varianten tr{display:block; padding:12px 14px; border-bottom:1px solid var(--line);}
+  table.varianten tr:first-child{display:none;}
+  table.varianten tr:last-child{border-bottom:none;}
+  table.varianten td{display:flex; justify-content:space-between; gap:14px; padding:4px 0; border-bottom:none; font-size:13px;}
+  table.varianten td::before{content:attr(data-label); font-size:11px; text-transform:uppercase; letter-spacing:0.03em; color:var(--muted-2); font-weight:600; flex-shrink:0;}
+  table.varianten td:first-child{font-weight:700; padding-bottom:8px;}
+  table.varianten td:first-child::before{content:none;}
+  table.varianten td:last-child{font-weight:700; padding-top:8px;}
+}
 
 /* Kalkulator */
 .calc-box{background:var(--dark-bg); border-radius:16px; padding:30px; display:flex; gap:36px; flex-wrap:wrap;}
@@ -1369,7 +1380,7 @@ function escHtml(s){
 
 function variantShortLabel(v){
   var top = (v.dims && v.dims !== '–' && v.dims !== 'auf Anfrage') ? v.dims : v.leistung;
-  var bottom = v.leistung + ' &middot; ' + v.lichtfarbe + ' &middot; &euro; ' + v.price;
+  var bottom = v.leistung + ' &middot; ' + v.lichtfarbe + (v.schaltung && v.schaltung !== 'on/off' ? ' &middot; ' + escHtml(v.schaltung) : '') + ' &middot; &euro; ' + v.price;
   return {top: escHtml(top), bottom: bottom};
 }
 
@@ -1399,7 +1410,7 @@ function renderDetail(slug){
   }).join('');
 
   var rowsHtml = p.variants.map(function(v){
-    return '<tr><td>' + escHtml(p.name) + '</td><td>' + escHtml(v.schaltung) + '</td><td>' + escHtml(v.lichtstrom) + '</td><td>' + escHtml(v.leistung) + '</td><td>' + escHtml(v.lmw) + '</td><td>' + escHtml(v.lichtfarbe) + '</td><td>' + escHtml(v.dims) + '</td><td style="font-family:monospace; font-size:11.5px;">' + escHtml(v.art) + '</td><td>' + escHtml(v.gar) + '</td><td>&euro; ' + v.price + '</td></tr>';
+    return '<tr><td data-label="Type">' + escHtml(p.name) + '</td><td data-label="Schaltung">' + escHtml(v.schaltung) + '</td><td data-label="Lichtstrom">' + escHtml(v.lichtstrom) + '</td><td data-label="Leistung">' + escHtml(v.leistung) + '</td><td data-label="lm/W">' + escHtml(v.lmw) + '</td><td data-label="Lichtfarbe">' + escHtml(v.lichtfarbe) + '</td><td data-label="L×B×H mm">' + escHtml(v.dims) + '</td><td data-label="Artikelnummer" style="font-family:monospace; font-size:11.5px;">' + escHtml(v.art) + '</td><td data-label="Gar.">' + escHtml(v.gar) + '</td><td data-label="Brutto €">&euro; ' + v.price + '</td></tr>';
   }).join('');
   document.getElementById('pd-variant-table').innerHTML = '<tr><th>Type</th><th>Schaltung</th><th>Lichtstrom</th><th>Leistung</th><th>lm/W</th><th>Lichtfarbe</th><th>L&times;B&times;H mm</th><th>Artikelnummer</th><th>Gar.</th><th>Brutto &euro;</th></tr>' + rowsHtml;
 
