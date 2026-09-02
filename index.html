@@ -251,6 +251,10 @@ table.varianten td{font-size:13px; padding:11px 12px; border-bottom:1px solid va
 .success-panel.show + #anfrage-form-wrap{display:none;}
 
 .crumb{font-size:13px; color:var(--muted-2); padding:20px 0 0;}
+.back-btn{display:none;}
+@media (max-width:859px){
+  .back-btn{display:inline-flex; align-items:center; gap:4px; background:none; border:none; color:var(--ink); font-size:14px; font-weight:600; cursor:pointer; padding:16px 0 0; font-family:inherit;}
+}
 .crumb a{color:var(--muted-2);}
 .crumb a:hover{color:var(--link);}
 
@@ -1255,6 +1259,7 @@ function closeMenuAnd(fn){
   fn();
 }
 var suppressHistoryPush = false;
+var pushedStateCount = 0;
 function go(id, slug){
   closeMenu();
   if(!suppressHistoryPush) saveScrollToCurrentEntry();
@@ -1621,7 +1626,11 @@ function saveScrollToCurrentEntry(){
 function pushHistoryState(){
   if(suppressHistoryPush) return;
   var state = currentStateFromUI();
-  try{ history.pushState(state, '', stateToUrl(state)); }catch(e){}
+  try{ history.pushState(state, '', stateToUrl(state)); pushedStateCount++; }catch(e){}
+}
+function backOrHome(){
+  if(pushedStateCount > 0){ pushedStateCount--; history.back(); }
+  else{ go('home'); }
 }
 function syncUrlReplace(){
   if(suppressHistoryPush) return;
@@ -1662,6 +1671,7 @@ function applyState(state){
   suppressHistoryPush = false;
 }
 window.addEventListener('popstate', function(e){
+  if(pushedStateCount > 0) pushedStateCount--;
   var state = e.state || parseStateFromLocation();
   applyState(state);
   var targetY = (state && typeof state.scrollY === 'number') ? state.scrollY : 0;
@@ -1963,6 +1973,14 @@ function renderCart(){
 
 try{ if('scrollRestoration' in history) history.scrollRestoration = 'manual'; }catch(e){}
 buildImgMap();
+document.querySelectorAll('.crumb').forEach(function(el){
+  var btn = document.createElement('button');
+  btn.type = 'button';
+  btn.className = 'back-btn';
+  btn.innerHTML = '&larr; Zur&uuml;ck';
+  btn.onclick = function(){ backOrHome(); };
+  el.parentNode.insertBefore(btn, el);
+});
 document.querySelectorAll('.proj-card .img[data-proj-slug]').forEach(function(el){
   var img = IMG_BY_SLUG[el.getAttribute('data-proj-slug')];
   if(img) el.style.backgroundImage = 'url(' + img + ')';
