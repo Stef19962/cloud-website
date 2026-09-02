@@ -1438,9 +1438,7 @@ function minPriceOf(p){
   });
   return min === Infinity ? null : min;
 }
-function matchScore(p, rawTerm){
-  var term = String(rawTerm || '').trim();
-  if(!term) return 1;
+function matchScoreSingle(p, term){
   var termNorm = normSearch(term);
   var name = normSearch(p.name);
   var desc = normSearch(p.desc);
@@ -1471,6 +1469,22 @@ function matchScore(p, rawTerm){
     if(best <= maxDist) score = Math.max(10, 40 - best * 12);
   }
   return score;
+}
+var MATCH_STOPWORDS = {'fuer':1,'für':1,'und':1,'mit':1,'von':1,'zum':1,'zur':1,'der':1,'die':1,'das':1,'ein':1,'eine':1,'for':1,'and':1,'with':1,'the':1,'a':1};
+function matchScore(p, rawTerm){
+  var term = String(rawTerm || '').trim();
+  if(!term) return 1;
+  var whole = matchScoreSingle(p, term);
+  if(whole > 0) return whole;
+  var words = term.split(/\s+/).filter(Boolean);
+  if(words.length <= 1) return 0;
+  var sigWords = words.filter(function(w){ return w.length >= 2 && !MATCH_STOPWORDS[w.toLowerCase()]; });
+  if(!sigWords.length) return 0;
+  var wordScores = sigWords.map(function(w){ return matchScoreSingle(p, w); });
+  var allMatched = wordScores.every(function(s){ return s > 0; });
+  if(!allMatched) return 0;
+  var avg = wordScores.reduce(function(a,b){ return a + b; }, 0) / wordScores.length;
+  return avg * 0.8;
 }
 var RATING_STARS_HTML = (function(){
   var star = '<svg width="12" height="12" viewBox="0 0 20 20" fill="none"><path d="M10 1.6l2.5 5.2 5.7.8-4.1 4 1 5.7L10 14.5l-5.1 2.8 1-5.7-4.1-4 5.7-.8L10 1.6z" stroke="var(--muted-2)" stroke-width="1.3" stroke-linejoin="round"/></svg>';
@@ -1975,7 +1989,15 @@ try{
 #ai-chat-input:focus-visible{outline:2px solid var(--link); outline-offset:1px;}
 #ai-chat-send{background:var(--accent); color:var(--accent-ink); border:none; border-radius:10px; padding:0 14px; font-size:13px; font-weight:600; cursor:pointer; flex-shrink:0;}
 #ai-chat-send:disabled{opacity:.5; cursor:default;}
+#ai-chat-greet{position:fixed; right:22px; bottom:90px; z-index:9998; max-width:230px; background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:12px 30px 12px 14px; box-shadow:var(--shadow); font-size:12.5px; line-height:1.5; color:var(--ink); cursor:pointer; animation:aiGreetIn .25s ease;}
+#ai-chat-greet-close{position:absolute; top:6px; right:8px; background:none; border:none; color:var(--muted-2); font-size:15px; line-height:1; cursor:pointer; padding:2px;}
+@keyframes aiGreetIn{from{opacity:0; transform:translateY(8px);} to{opacity:1; transform:translateY(0);}}
 </style>
+
+<div id="ai-chat-greet" hidden onclick="openAiChatFromGreeting()">
+  <button id="ai-chat-greet-close" type="button" aria-label="Schlie&szlig;en" onclick="dismissAiGreeting(event)">&times;</button>
+  <p style="margin:0;">👋 Willkommen bei ITECKA! Fragen zu Produkten oder eine Anfrage? Ich helfe gerne.</p>
+</div>
 
 <button id="ai-chat-fab" type="button" aria-label="Chat-Assistent öffnen" onclick="toggleAiChat()">
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
@@ -1994,20 +2016,7 @@ try{
 </div>
 
 <script>
-var aiChatCap = null;
-var aiChatHistory = [];
 var aiChatReady = false;
-var aiChatBusy = false;
-
-function aiChatSystemContext(){
-  var lines = PRODUCTS.map(function(p){
-    var priceFrom = p.variants && p.variants[0] ? p.variants[0].price : '?';
-    return '- ' + p.name + ' (' + p.catName + '): ' + p.desc + ' Ab €' + priceFrom + '.';
-  }).join('\n');
-  return 'Du bist der Website-Assistent von ITECKA GmbH, einem österreichischen B2B-Anbieter für LED-Beleuchtung (Büro, Industrie/Gewerbe, Feuchtraum, Außenbereich) mit Sitz in Graz. ' +
-    'Beantworte Besucherfragen freundlich, kurz und auf Deutsch. Nutze ausschließlich die folgenden echten Produktdaten, erfinde keine Artikel, Maße oder Preise: \n' + lines +
-    '\nWenn eine Frage nicht mit diesen Daten beantwortbar ist (z.B. Lieferzeiten, individuelle Angebote), verweise freundlich auf eine Anfrage über das Kontaktformular oder office@itecka.com.';
-}
 
 function aiChatAppend(role, text){
   var body = document.getElementById('ai-chat-body');
@@ -2017,6 +2026,57 @@ function aiChatAppend(role, text){
   body.appendChild(div);
   body.scrollTop = body.scrollHeight;
   return div;
+}
+
+function aiChatAppendProducts(products){
+  var body = document.getElementById('ai-chat-body');
+  var wrap = document.createElement('div');
+  wrap.style.cssText = 'display:flex; flex-direction:column; gap:8px; align-self:stretch;';
+  products.forEach(function(p){
+    var min = minPriceOf(p);
+    var priceHtml = min !== null ? 'ab € ' + min.toFixed(2).replace('.', ',') : 'auf Anfrage';
+    var row = document.createElement('div');
+    row.style.cssText = 'display:flex; align-items:center; gap:10px; padding:8px; border:1px solid var(--line); border-radius:10px; cursor:pointer; background:var(--surface-2);';
+    row.innerHTML =
+      '<img src="' + (IMG_BY_SLUG[p.slug] || '') + '" alt="" style="width:40px; height:40px; border-radius:6px; object-fit:cover; flex-shrink:0;">' +
+      '<div style="flex:1; min-width:0;">' +
+        '<p style="font-weight:600; font-size:12.5px; margin:0;">' + escHtml(p.name) + '</p>' +
+        '<p style="font-size:11px; color:var(--muted-2); margin:0;">' + escHtml(bereichLabel(p.cat)) + ' · ' + priceHtml + '</p>' +
+      '</div>';
+    row.onclick = function(){ toggleAiChat(false); go('detail', p.slug); };
+    wrap.appendChild(row);
+  });
+  body.appendChild(wrap);
+  body.scrollTop = body.scrollHeight;
+}
+
+function aiChatFindProducts(query){
+  query = String(query || '').trim();
+  if(!query) return {type: 'empty'};
+
+  var exactArt = null;
+  PRODUCTS.some(function(p){
+    return p.variants.some(function(v){
+      if(normSearch(v.art) === normSearch(query)){ exactArt = p; return true; }
+      return false;
+    });
+  });
+  if(exactArt) return {type: 'exact', product: exactArt};
+
+  var bereichKey = BEREICH_SYNONYMS[query.toLowerCase()];
+  if(bereichKey){
+    var bereichMatches = PRODUCTS.filter(function(p){
+      return bereichKey === 'aussen' ? p.cat === 'aussen' : (p.cat === 'buero' || p.cat === 'industrie');
+    });
+    return {type: 'bereich', bereich: bereichKey, products: bereichMatches.slice(0, 5)};
+  }
+
+  var ranked = PRODUCTS.map(function(p){ return {p: p, score: matchScore(p, query)}; })
+    .filter(function(x){ return x.score > 0; })
+    .sort(function(a, b){ return b.score - a.score; })
+    .slice(0, 5)
+    .map(function(x){ return x.p; });
+  return {type: ranked.length ? 'results' : 'none', products: ranked};
 }
 
 function toggleAiChat(force){
@@ -2032,70 +2092,63 @@ function toggleAiChat(force){
 function initAiChat(){
   if(aiChatReady) return;
   aiChatReady = true;
-  if(!(window.claude && typeof window.claude.use === 'function')){
-    aiChatAppend('hint', 'Der Chat-Assistent ist in dieser Vorschau nicht verfügbar.');
-    return;
-  }
-  aiChatAppend('hint', 'Verbinde…');
-  window.claude.use('sample').then(function(cap){
-    var hint = document.querySelector('#ai-chat-body .ai-msg.hint');
-    if(!cap){
-      if(hint) hint.textContent = 'Der Chat-Assistent ist in dieser Ansicht nicht verfügbar.';
-      return;
-    }
-    aiChatCap = cap;
-    if(hint) hint.remove();
-    aiChatAppend('bot', 'Hallo! Ich bin der ITECKA Assistent. Frag mich z.B. nach einer passenden Leuchte, Maßen oder Preisen.');
-  }).catch(function(){
-    var hint = document.querySelector('#ai-chat-body .ai-msg.hint');
-    if(hint) hint.textContent = 'Der Chat-Assistent konnte nicht geladen werden.';
-  });
+  aiChatAppend('bot', 'Hallo! 👋 Ich bin der ITECKA-Assistent. Beschreiben Sie, welche Leuchte Sie suchen (z. B. „LED Panel für Büro“, eine Artikelnummer oder „Außenbereich“) – ich zeige Ihnen passende Produkte.');
 }
 
 function sendAiChat(ev){
   if(ev && ev.preventDefault) ev.preventDefault();
-  if(aiChatBusy) return false;
   var input = document.getElementById('ai-chat-input');
   var text = (input.value || '').trim();
   if(!text) return false;
-  if(!aiChatCap){
-    aiChatAppend('hint', 'Der Assistent ist noch nicht bereit.');
-    return false;
-  }
   input.value = '';
   aiChatAppend('user', text);
-  aiChatHistory.push({role:'user', content: text});
 
-  var turns = aiChatHistory.slice();
-  turns[0] = {role:'user', content: aiChatSystemContext() + '\n\nBesucherfrage: ' + turns[0].content};
-  if(turns.length > 1){
-    turns[turns.length - 1] = {role:'user', content: 'Kontext: ' + aiChatSystemContext() + '\n\nBesucherfrage: ' + text};
+  var result = aiChatFindProducts(text);
+  if(result.type === 'exact'){
+    aiChatAppend('bot', 'Gefunden: ' + result.product.name + ' – hier sind die Details:');
+    aiChatAppendProducts([result.product]);
+  } else if(result.type === 'bereich'){
+    if(result.products.length){
+      aiChatAppend('bot', 'Diese Produkte eignen sich für den ' + (result.bereich === 'aussen' ? 'Außenbereich' : 'Innenbereich') + ':');
+      aiChatAppendProducts(result.products);
+    } else {
+      aiChatAppend('bot', 'Dazu habe ich aktuell keine passenden Produkte gefunden. Gerne können Sie uns direkt eine Anfrage senden, unser Team hilft weiter.');
+    }
+  } else if(result.type === 'results'){
+    aiChatAppend('bot', 'Das könnte passen:');
+    aiChatAppendProducts(result.products);
+  } else {
+    aiChatAppend('bot', 'Dazu konnte ich leider kein passendes Produkt finden. Bitte prüfen Sie die Artikelnummer oder durchsuchen Sie unseren Katalog – gerne können Sie uns auch direkt eine Anfrage senden.');
   }
-
-  aiChatBusy = true;
-  document.getElementById('ai-chat-send').disabled = true;
-  var botDiv = aiChatAppend('bot', 'Tippt…');
-
-  aiChatCap(turns, {
-    modelTier: 'quick',
-    onText: function(u){ botDiv.textContent = u.text || 'Tippt…'; document.getElementById('ai-chat-body').scrollTop = 1e9; }
-  }).then(function(res){
-    botDiv.textContent = res.text;
-    aiChatHistory.push({role:'assistant', content: res.text});
-    aiChatBusy = false;
-    document.getElementById('ai-chat-send').disabled = false;
-  }).catch(function(err){
-    var code = err && err.code;
-    if(code === 'not_granted'){ botDiv.textContent = 'Der Chat wurde nicht freigegeben.'; }
-    else if(code === 'rate_limited'){ botDiv.textContent = 'Gerade zu viele Anfragen — bitte kurz warten und nochmal versuchen.'; }
-    else if(code === 'cancelled'){ botDiv.remove(); }
-    else { botDiv.textContent = (err && err.text) || 'Entschuldigung, da ist etwas schiefgelaufen. Bitte nochmal versuchen.'; }
-    aiChatHistory.pop();
-    aiChatBusy = false;
-    document.getElementById('ai-chat-send').disabled = false;
-  });
   return false;
 }
+
+function showAiGreetingIfNeeded(){
+  try{
+    if(localStorage.getItem('itecka-chat-greeted')) return;
+  }catch(e){}
+  var el = document.getElementById('ai-chat-greet');
+  if(!el) return;
+  setTimeout(function(){
+    var panel = document.getElementById('ai-chat-panel');
+    if(panel && panel.classList.contains('open')) return;
+    el.hidden = false;
+  }, 3000);
+}
+function markAiGreeted(){
+  try{ localStorage.setItem('itecka-chat-greeted', '1'); }catch(e){}
+}
+function dismissAiGreeting(ev){
+  if(ev) ev.stopPropagation();
+  document.getElementById('ai-chat-greet').hidden = true;
+  markAiGreeted();
+}
+function openAiChatFromGreeting(){
+  document.getElementById('ai-chat-greet').hidden = true;
+  markAiGreeted();
+  toggleAiChat(true);
+}
+showAiGreetingIfNeeded();
 </script>
 
 <style>
