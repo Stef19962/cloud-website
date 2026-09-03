@@ -1642,7 +1642,7 @@ function productCardHtml(p, opts){
     '<div class="pc-body">' +
       '<div style="display:flex; gap:6px; flex-wrap:wrap;">' + badgesHtml + bereichBadge + '</div>' +
       '<p class="name">' + escHtml(p.name) + '</p>' +
-      '<div class="rating">' + RATING_STARS_HTML + '<span class="rating-label">Noch keine Bewertungen</span></div>' +
+      '<div class="rating" data-rating-slug="' + p.slug + '">' + RATING_STARS_HTML + '<span class="rating-label">Noch keine Bewertungen</span></div>' +
       '<p class="meta">ITECKA &middot; ' + escHtml(p.catName) + '</p>' +
       '<p class="desc">' + escHtml(p.desc) + '</p>' +
       '<div class="pc-actions">' +
@@ -1733,8 +1733,41 @@ function applyProductVisibility(){
     '</div>';
   } else {
     grid.innerHTML = results.map(function(p){ return productCardHtml(p, {showBereich: showBereich}); }).join('') + NEWSLETTER_BANNER_HTML;
+    loadGridRatings(results);
   }
   syncUrlReplace();
+}
+var GRID_RATINGS_CACHE = {};
+function applyGridRating(slug, data){
+  var els = document.querySelectorAll('.rating[data-rating-slug="' + slug + '"]');
+  if(!els.length) return;
+  var html;
+  if(!data || !data.count){
+    html = RATING_STARS_HTML + '<span class="rating-label">Noch keine Bewertungen</span>';
+  } else {
+    var fmt = new Intl.NumberFormat('de-AT', {maximumFractionDigits:1}).format(data.avg);
+    var label = data.count === 1 ? '1 Bewertung' : (data.count + ' Bewertungen');
+    html = smallStarsHtml(data.avg) + '<span class="rating-label">' + fmt + ' &middot; ' + label + '</span>';
+  }
+  els.forEach(function(el){ el.innerHTML = html; });
+}
+function loadGridRatings(products){
+  var seen = {};
+  products.forEach(function(p){
+    if(seen[p.slug]) return;
+    seen[p.slug] = true;
+    if(GRID_RATINGS_CACHE[p.slug]){
+      applyGridRating(p.slug, GRID_RATINGS_CACHE[p.slug]);
+      return;
+    }
+    fetch('reviews.php?slug=' + encodeURIComponent(p.slug))
+      .then(function(r){ return r.json(); })
+      .then(function(data){
+        GRID_RATINGS_CACHE[p.slug] = data;
+        applyGridRating(p.slug, data);
+      })
+      .catch(function(){});
+  });
 }
 function stateToUrl(state){
   var params = new URLSearchParams();
@@ -2099,6 +2132,7 @@ function fetchProductReviews(slug){
   fetch('reviews.php?slug=' + encodeURIComponent(slug))
     .then(function(r){ return r.json(); })
     .then(function(data){
+      GRID_RATINGS_CACHE[slug] = data;
       if(currentDetailSlug !== slug) return;
       renderReviewSummary(data);
       renderReviewList(data);
