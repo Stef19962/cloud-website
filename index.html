@@ -1393,10 +1393,44 @@ function go(id, slug){
   document.querySelectorAll('.page').forEach(function(p){ p.classList.remove('active'); });
   var target = document.getElementById('page-' + id) || document.getElementById('page-home');
   target.classList.add('active');
+  updateSeoMeta(currentStateFromUI());
   if(!suppressHistoryPush){
     pushHistoryState();
     window.scrollTo({top:0, behavior:'auto'});
   }
+}
+var SEO_BASE = 'https://www.itecka.com';
+var SEO_DEFAULT_TITLE = 'ITECKA GmbH – LED-Beleuchtung für Industrie, Büro & Außenbereich | Graz';
+var SEO_DEFAULT_DESC = 'LED-Beleuchtungslösungen für Büro, Industrie und Außenbereich – Planung, Montage und Sonderanfertigungen direkt aus Graz. Jetzt unverbindlich anfragen.';
+function updateSeoMeta(state){
+  var title = SEO_DEFAULT_TITLE;
+  var desc = SEO_DEFAULT_DESC;
+  if(state.page === 'detail' && state.slug){
+    var p = (typeof PRODUCTS_BY_SLUG !== 'undefined') ? PRODUCTS_BY_SLUG[state.slug] : null;
+    if(p){
+      title = p.name + ' – LED-Leuchte für ' + p.catName + ' | ITECKA';
+      desc = p.desc;
+    }
+  } else if(state.page === 'products'){
+    title = 'Produkte – LED-Beleuchtung für Büro, Industrie & Außenbereich | ITECKA';
+    desc = 'Alle LED-Leuchten von ITECKA im Überblick: Büro, Industrie, Gewerbe, Feuchtraum und Außenbereich.';
+  } else if(state.page === 'about'){
+    title = 'Über ITECKA – LED-Beleuchtung aus Graz';
+  } else if(state.page === 'stromsparrechner'){
+    title = 'Stromsparrechner für LED-Beleuchtung | ITECKA';
+    desc = 'Verbrauch und Amortisation einer LED-Umrüstung berechnen – mit echten Werten aus dem Datenblatt.';
+  } else if(state.page === 'request'){
+    title = 'Anfrage senden | ITECKA';
+  } else if(state.page === 'impressum'){
+    title = 'Impressum | ITECKA';
+  } else if(state.page === 'datenschutz'){
+    title = 'Datenschutzerklärung | ITECKA';
+  }
+  document.title = title;
+  var descEl = document.querySelector('meta[name="description"]');
+  if(descEl) descEl.setAttribute('content', desc);
+  var canonicalEl = document.querySelector('link[rel="canonical"]');
+  if(canonicalEl) canonicalEl.setAttribute('href', SEO_BASE + stateToUrl(state).split('?')[0]);
 }
 function buildCartSummary(){
   var produkt = [], variante = [], art = [], totalQty = 0;
@@ -1776,16 +1810,20 @@ function loadGridRatings(products){
       .catch(function(){});
   });
 }
+var PAGE_PATH = {home:'/', products:'/produkte', request:'/anfrage', about:'/ueber-itecka', stromsparrechner:'/stromsparrechner', impressum:'/impressum', datenschutz:'/datenschutz'};
+var PATH_PAGE = {'/produkte':'products', '/anfrage':'request', '/ueber-itecka':'about', '/stromsparrechner':'stromsparrechner', '/impressum':'impressum', '/datenschutz':'datenschutz'};
 function stateToUrl(state){
+  var page = state.page || 'home';
+  var path = (page === 'detail' && state.slug) ? ('/produkte/' + encodeURIComponent(state.slug)) : (PAGE_PATH[page] || '/');
   var params = new URLSearchParams();
-  params.set('page', state.page || 'home');
-  if(state.cat) params.set('cat', state.cat);
-  if(state.bereich) params.set('bereich', state.bereich);
-  if(state.q) params.set('suche', state.q);
-  if(state.slug) params.set('slug', state.slug);
-  if(state.filt) params.set('filt', state.filt);
+  if(page === 'products'){
+    if(state.cat) params.set('cat', state.cat);
+    if(state.bereich) params.set('bereich', state.bereich);
+    if(state.q) params.set('suche', state.q);
+    if(state.filt) params.set('filt', state.filt);
+  }
   var qs = params.toString();
-  return qs ? ('?' + qs) : location.pathname;
+  return path + (qs ? ('?' + qs) : '');
 }
 function currentStateFromUI(){
   var activeEl = document.querySelector('.page.active');
@@ -1831,6 +1869,26 @@ function syncUrlReplace(){
 }
 function parseStateFromLocation(){
   var params = new URLSearchParams(location.search);
+  var path = location.pathname.replace(/\/index\.html$/, '/').replace(/\/+$/, '') || '/';
+
+  var produktMatch = /^\/produkte\/([^\/]+)$/.exec(path);
+  if(produktMatch) return {page: 'detail', slug: decodeURIComponent(produktMatch[1])};
+
+  if(PATH_PAGE[path]){
+    var s = {page: PATH_PAGE[path]};
+    if(s.page === 'products'){
+      if(params.get('cat')) s.cat = params.get('cat');
+      if(params.get('bereich')) s.bereich = params.get('bereich');
+      if(params.get('suche')) s.q = params.get('suche');
+      if(params.get('filt')) s.filt = params.get('filt');
+    }
+    return s;
+  }
+
+  // Legacy links (?page=...&slug=...) and hash links only ever pointed at the
+  // root path - anything else unrecognized falls through to home.
+  if(path !== '/') return {page: 'home'};
+
   var page = params.get('page');
   if(!page){
     var hash = (location.hash || '').replace('#', '');

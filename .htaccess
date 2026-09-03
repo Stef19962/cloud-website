@@ -8,3 +8,14 @@
 <IfModule mod_expires.c>
   ExpiresActive Off
 </IfModule>
+
+# Clean URLs (e.g. /produkte/led-panel-01-series): serve index.html for any
+# request that isn't an existing file or directory, so the single-page app's
+# own JS router can read the path. Real files (PHP endpoints, the PDF,
+# robots.txt, images, etc.) are left untouched.
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteRule ^ index.html [L]
+</IfModule>
