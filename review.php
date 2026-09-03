@@ -72,6 +72,50 @@ function itecka_review_rich_text($text) {
     ]];
 }
 
+function itecka_notion_curl($url, $payload) {
+    $ch = curl_init($url);
+    curl_setopt_array($ch, [
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_POST => true,
+        CURLOPT_POSTFIELDS => $payload,
+        CURLOPT_HTTPHEADER => [
+            'Authorization: Bearer ' . NOTION_TOKEN,
+            'Notion-Version: 2022-06-28',
+            'Content-Type: application/json',
+        ],
+        CURLOPT_TIMEOUT => 15,
+    ]);
+    $response = curl_exec($ch);
+    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    $curlError = curl_error($ch);
+    curl_close($ch);
+    return [$response, $httpCode, $curlError];
+}
+
+// One review per email address per product: check for an existing entry
+// (any status - including still-pending ones) before creating a new one.
+$dupPayload = json_encode([
+    'filter' => [
+        'and' => [
+            ['property' => 'E-Mail', 'email' => ['equals' => $email]],
+            ['property' => 'Produkt / Bezug', 'rich_text' => ['ends_with' => $slug]],
+        ],
+    ],
+    'page_size' => 1,
+]);
+list($dupResponse, $dupHttpCode) = itecka_notion_curl(
+    'https://api.notion.com/v1/databases/' . NOTION_REVIEWS_DATABASE_ID . '/query',
+    $dupPayload
+);
+if ($dupHttpCode >= 200 && $dupHttpCode < 300) {
+    $dupBody = json_decode((string) $dupResponse, true);
+    if (is_array($dupBody) && !empty($dupBody['results'])) {
+        http_response_code(409);
+        echo json_encode(['ok' => false, 'error' => 'already_reviewed']);
+        exit;
+    }
+}
+
 $titleText = $produktname !== '' ? ($produktname . ' – ' . $name . ' (' . $sterne . '★)') : ($name . ' (' . $sterne . '★)');
 $bezug = ($produktname !== '' ? $produktname . ' · ' : '') . $slug;
 $sterneLabel = $sterne === 1 ? '1 Stern' : $sterne . ' Sterne';
@@ -93,22 +137,7 @@ $payload = json_encode([
     'properties' => $properties,
 ]);
 
-$ch = curl_init('https://api.notion.com/v1/pages');
-curl_setopt_array($ch, [
-    CURLOPT_RETURNTRANSFER => true,
-    CURLOPT_POST => true,
-    CURLOPT_POSTFIELDS => $payload,
-    CURLOPT_HTTPHEADER => [
-        'Authorization: Bearer ' . NOTION_TOKEN,
-        'Notion-Version: 2022-06-28',
-        'Content-Type: application/json',
-    ],
-    CURLOPT_TIMEOUT => 15,
-]);
-$response = curl_exec($ch);
-$httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-$curlError = curl_error($ch);
-curl_close($ch);
+list($response, $httpCode, $curlError) = itecka_notion_curl('https://api.notion.com/v1/pages', $payload);
 
 if ($response === false || $httpCode < 200 || $httpCode >= 300) {
     error_log('ITECKA Bewertung -> Notion failed: HTTP ' . $httpCode . ' ' . $curlError . ' body=' . $response);

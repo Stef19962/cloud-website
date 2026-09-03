@@ -2145,6 +2145,9 @@ function submitReview(ev){
     if(res && res.ok){
       document.getElementById('pd-review-form').style.display = 'none';
       document.getElementById('pd-review-success').style.display = 'flex';
+    } else if(res && res.error === 'already_reviewed'){
+      alert('Diese E-Mail-Adresse hat für dieses Produkt bereits eine Bewertung abgegeben. Pro Produkt ist nur eine Bewertung je E-Mail-Adresse möglich.');
+      if(submitBtn){ submitBtn.disabled = false; submitBtn.textContent = 'Bewertung absenden'; }
     } else {
       var debugInfo = (res && res.debug) ? ('\n\n[Debug: ' + res.debug + ']') : (res && res.error ? ('\n\n[Debug: ' + res.error + ']') : '');
       alert('Die Bewertung konnte nicht gesendet werden. Bitte versuchen Sie es erneut oder schreiben Sie uns direkt an office@itecka.com.' + debugInfo);
