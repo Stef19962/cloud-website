@@ -149,24 +149,8 @@ main{max-width:1240px; margin:0 auto; padding:0 20px;}
 
 /* Hero */
 .hero{position:relative; overflow:hidden; padding:64px 0 56px; display:flex; flex-direction:column; align-items:center; text-align:center; gap:20px;}
-.hero-bolts{position:absolute; inset:0; z-index:0; pointer-events:none;}
-.hero-bolt{position:absolute; fill:var(--accent); stroke:none;}
-.hero-bolt.b1{top:3%; left:3%; width:28px; height:56px; opacity:.16; transform:rotate(-6deg); animation:hero-glow-1 6.5s ease-in-out infinite;}
-.hero-bolt.b2{bottom:3%; right:4%; width:24px; height:48px; opacity:.13; transform:rotate(7deg); animation:hero-glow-2 7.5s ease-in-out infinite 2s;}
-@keyframes hero-glow-1{0%,100%{opacity:.16;} 50%{opacity:.24;}}
-@keyframes hero-glow-2{0%,100%{opacity:.13;} 50%{opacity:.20;}}
 .hero > *{position:relative; z-index:1;}
 section.block{position:relative;}
-.scroll-bolt{position:absolute; fill:var(--accent); stroke:none; opacity:.08; pointer-events:none; z-index:0;}
-.scroll-bolt.flash{animation:bolt-flash 1.3s ease-out;}
-@keyframes bolt-flash{
-  0%{opacity:.08;}
-  9%{opacity:.6;}
-  16%{opacity:.15;}
-  26%{opacity:.5;}
-  40%{opacity:.1;}
-  100%{opacity:.08;}
-}
 .hero h1{font-size:27px; line-height:1.12; max-width:760px;}
 .hero p{font-size:17px; color:var(--muted); max-width:620px; line-height:1.55;}
 .search-wrap{position:relative; width:100%;}
@@ -374,10 +358,6 @@ table.varianten td{font-size:13px; padding:11px 12px; border-bottom:1px solid va
   <!-- HOME -->
   <section id="page-home" class="page active">
     <div class="hero">
-      <div class="hero-bolts" aria-hidden="true">
-        <svg class="hero-bolt b1" viewBox="0 0 16 32"><path d="M9 1 2 18h5l-1 13 8-18H9l1-13z"/></svg>
-        <svg class="hero-bolt b2" viewBox="0 0 16 32"><path d="M9 1 2 18h5l-1 13 8-18H9l1-13z"/></svg>
-      </div>
       <span class="badge badge-tech">B2B &middot; Österreich &middot; Industriebeleuchtung</span>
       <h1>Ihr Partner für hochwertige Industriebeleuchtung</h1>
       <p>Von der ersten Planung bis zur fachgerechten Montage durch unser eigenes Team &ndash; maßgeschneiderte Lichtlösungen für Gewerbe, Industrie und öffentliche Auftraggeber.</p>
@@ -392,7 +372,6 @@ table.varianten td{font-size:13px; padding:11px 12px; border-bottom:1px solid va
     </div>
 
     <section class="block">
-    <svg class="scroll-bolt" viewBox="0 0 16 32" style="top:4px; right:8px; width:18px; height:36px;" aria-hidden="true"><path d="M9 1 2 18h5l-1 13 8-18H9l1-13z"/></svg>
     
       <div class="grid-3">
         <div class="card cat-card" onclick="goCategory('buero')">
@@ -414,7 +393,6 @@ table.varianten td{font-size:13px; padding:11px 12px; border-bottom:1px solid va
     </section>
 
     <section class="block">
-    <svg class="scroll-bolt" viewBox="0 0 16 32" style="top:2px; left:6px; width:16px; height:32px;" aria-hidden="true"><path d="M9 1 2 18h5l-1 13 8-18H9l1-13z"/></svg>
     
       <div class="block-head" id="unsere-projekte"><h2>Unsere Projekte</h2><p style="font-size:14px; color:var(--muted);">Mit ITECKA bringst du alles zum Strahlen.</p></div>
       <div class="grid-5">
@@ -428,7 +406,6 @@ table.varianten td{font-size:13px; padding:11px 12px; border-bottom:1px solid va
     </section>
 
     <section class="block">
-    <svg class="scroll-bolt" viewBox="0 0 16 32" style="top:6px; right:4px; width:20px; height:40px;" aria-hidden="true"><path d="M9 1 2 18h5l-1 13 8-18H9l1-13z"/></svg>
     
       <div class="block-head"><h2>Neue Produkte</h2><a onclick="go('products')">Alle Produkte ansehen &rarr;</a></div>
       <div class="grid-4">
@@ -472,7 +449,6 @@ table.varianten td{font-size:13px; padding:11px 12px; border-bottom:1px solid va
     </section>
 
     <section class="block">
-    <svg class="scroll-bolt" viewBox="0 0 16 32" style="bottom:10px; left:10px; width:16px; height:32px;" aria-hidden="true"><path d="M9 1 2 18h5l-1 13 8-18H9l1-13z"/></svg>
     
       <div class="dark-band">
         <div style="display:flex; flex-direction:column; gap:14px; max-width:400px;">
@@ -495,7 +471,6 @@ table.varianten td{font-size:13px; padding:11px 12px; border-bottom:1px solid va
     </section>
 
     <section class="block">
-    <svg class="scroll-bolt" viewBox="0 0 16 32" style="top:0px; right:14px; width:18px; height:36px;" aria-hidden="true"><path d="M9 1 2 18h5l-1 13 8-18H9l1-13z"/></svg>
     
       <h2 style="font-size:27px; margin-bottom:22px;">Warum ITECKA</h2>
       <div class="usp-grid">
@@ -2575,36 +2550,6 @@ try{
 }catch(e){}
 setLanguage(currentLang);
 if(!savedLang) detectLangByGeo();
-(function(){
-  var bolts = document.querySelectorAll('.scroll-bolt');
-  if(!bolts.length || !('IntersectionObserver' in window)) return;
-  var timers = new Map();
-  function flashOnce(el){
-    el.classList.remove('flash');
-    void el.offsetWidth;
-    el.classList.add('flash');
-  }
-  function scheduleFlash(el){
-    var delay = 3500 + Math.random() * 5500;
-    timers.set(el, setTimeout(function(){
-      flashOnce(el);
-      scheduleFlash(el);
-    }, delay));
-  }
-  var io = new IntersectionObserver(function(entries){
-    entries.forEach(function(entry){
-      var el = entry.target;
-      if(entry.isIntersecting){
-        flashOnce(el);
-        scheduleFlash(el);
-      } else if(timers.has(el)){
-        clearTimeout(timers.get(el));
-        timers.delete(el);
-      }
-    });
-  }, {threshold:0.4});
-  bolts.forEach(function(b){ io.observe(b); });
-})();
 </script>
 
 <style>
