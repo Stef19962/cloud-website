@@ -2233,13 +2233,29 @@ if(!savedLang) detectLangByGeo();
 (function(){
   var bolts = document.querySelectorAll('.scroll-bolt');
   if(!bolts.length || !('IntersectionObserver' in window)) return;
+  var timers = new Map();
+  function flashOnce(el){
+    el.classList.remove('flash');
+    void el.offsetWidth;
+    el.classList.add('flash');
+  }
+  function scheduleFlash(el){
+    var delay = 3500 + Math.random() * 5500;
+    timers.set(el, setTimeout(function(){
+      flashOnce(el);
+      scheduleFlash(el);
+    }, delay));
+  }
   var io = new IntersectionObserver(function(entries){
     entries.forEach(function(entry){
-      if(!entry.isIntersecting) return;
       var el = entry.target;
-      el.classList.remove('flash');
-      void el.offsetWidth;
-      el.classList.add('flash');
+      if(entry.isIntersecting){
+        flashOnce(el);
+        scheduleFlash(el);
+      } else if(timers.has(el)){
+        clearTimeout(timers.get(el));
+        timers.delete(el);
+      }
     });
   }, {threshold:0.4});
   bolts.forEach(function(b){ io.observe(b); });
