@@ -2146,7 +2146,8 @@ function submitReview(ev){
       document.getElementById('pd-review-form').style.display = 'none';
       document.getElementById('pd-review-success').style.display = 'flex';
     } else {
-      alert('Die Bewertung konnte nicht gesendet werden. Bitte versuchen Sie es erneut oder schreiben Sie uns direkt an office@itecka.com.');
+      var debugInfo = (res && res.debug) ? ('\n\n[Debug: ' + res.debug + ']') : (res && res.error ? ('\n\n[Debug: ' + res.error + ']') : '');
+      alert('Die Bewertung konnte nicht gesendet werden. Bitte versuchen Sie es erneut oder schreiben Sie uns direkt an office@itecka.com.' + debugInfo);
       if(submitBtn){ submitBtn.disabled = false; submitBtn.textContent = 'Bewertung absenden'; }
     }
   }).catch(function(){

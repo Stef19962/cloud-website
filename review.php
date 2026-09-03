@@ -109,8 +109,19 @@ curl_close($ch);
 
 if ($response === false || $httpCode < 200 || $httpCode >= 300) {
     error_log('ITECKA Bewertung -> Notion failed: HTTP ' . $httpCode . ' ' . $curlError . ' body=' . $response);
+    $notionMessage = '';
+    $decoded = json_decode((string) $response, true);
+    if (is_array($decoded) && isset($decoded['message'])) {
+        $notionMessage = $decoded['message'];
+    } elseif ($curlError !== '') {
+        $notionMessage = $curlError;
+    }
     http_response_code(502);
-    echo json_encode(['ok' => false, 'error' => 'notion_error']);
+    echo json_encode([
+        'ok' => false,
+        'error' => 'notion_error',
+        'debug' => 'HTTP ' . $httpCode . ($notionMessage !== '' ? ': ' . mb_substr($notionMessage, 0, 200) : ''),
+    ]);
     exit;
 }
 
