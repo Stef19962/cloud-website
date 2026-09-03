@@ -56,7 +56,7 @@ $errors = [];
 if ($slug === '') $errors[] = 'slug';
 if ($name === '') $errors[] = 'name';
 if ($sterne < 1 || $sterne > 5) $errors[] = 'sterne';
-if ($email !== '' && !filter_var($email, FILTER_VALIDATE_EMAIL)) $errors[] = 'email';
+if ($email === '' || !filter_var($email, FILTER_VALIDATE_EMAIL)) $errors[] = 'email';
 
 if (!empty($errors)) {
     http_response_code(400);

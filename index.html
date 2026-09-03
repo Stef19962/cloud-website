@@ -1082,7 +1082,7 @@ table.varianten td{font-size:13px; padding:11px 12px; border-bottom:1px solid va
           </div>
           <div class="form-grid">
             <div class="field"><label>Ihr Name <span class="req">*</span></label><input type="text" id="rv-name" placeholder="Vor- und Nachname" required></div>
-            <div class="field"><label>E-Mail (optional, nicht &ouml;ffentlich)</label><input type="email" id="rv-email" placeholder="name@firma.at"></div>
+            <div class="field"><label>E-Mail <span class="req">*</span> <span style="font-weight:400; color:var(--muted-2);">(nicht &ouml;ffentlich)</span></label><input type="email" id="rv-email" placeholder="name@firma.at" required></div>
           </div>
           <div class="field"><label>Kommentar</label><textarea rows="3" id="rv-comment" placeholder="Ihre Erfahrung mit diesem Produkt..."></textarea></div>
           <input type="text" id="rv-honeypot" name="website" tabindex="-1" autocomplete="off" style="position:absolute; left:-9999px; width:1px; height:1px; opacity:0;" aria-hidden="true">
@@ -2104,6 +2104,10 @@ function submitReview(ev){
   }
   if(!name){
     alert('Bitte geben Sie Ihren Namen an.');
+    return false;
+  }
+  if(!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
+    alert('Bitte geben Sie eine gültige E-Mail-Adresse an. Sie wird nicht veröffentlicht, hilft uns aber bei der Prüfung der Bewertung.');
     return false;
   }
 
