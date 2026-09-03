@@ -1566,6 +1566,11 @@ function minPriceOf(p){
   });
   return min === Infinity ? null : min;
 }
+function euroWhole(val){
+  var n = typeof val === 'number' ? val : parseFloat(String(val).replace(/\./g,'').replace(',', '.'));
+  if(isNaN(n)) return String(val);
+  return Math.floor(n).toLocaleString('de-DE');
+}
 function matchScoreSingle(p, term){
   var termNorm = normSearch(term);
   var name = normSearch(p.name);
@@ -1632,7 +1637,7 @@ function productCardHtml(p, opts){
   opts = opts || {};
   var img = IMG_BY_SLUG[p.slug] || '';
   var min = minPriceOf(p);
-  var priceHtml = min !== null ? 'ab &euro; ' + min.toFixed(2).replace('.', ',') : 'auf Anfrage';
+  var priceHtml = min !== null ? 'ab &euro; ' + euroWhole(min) : 'auf Anfrage';
   var badgesHtml = p.badges.map(function(b){
     return '<span class="badge' + (b === 'Neu' || b === 'Aktuell' ? ' badge-amber' : '') + '">' + escHtml(b) + '</span>';
   }).join('');
@@ -1931,7 +1936,7 @@ function pickVariant(btn, label, watt, price){
   document.querySelectorAll('.variant-pill').forEach(function(el){ el.classList.remove('active'); });
   btn.classList.add('active');
   document.getElementById('pd-variant-label').innerHTML = label;
-  document.getElementById('pd-variant-price').textContent = price.toFixed(2).replace('.', ',');
+  document.getElementById('pd-variant-price').textContent = euroWhole(price);
   var calcNewInput = document.getElementById('calc-new');
   if(calcNewInput){
     calcNewInput.value = watt;
@@ -1995,7 +2000,7 @@ function escHtml(s){
 
 function variantShortLabel(v){
   var top = (v.dims && v.dims !== '–' && v.dims !== 'auf Anfrage') ? v.dims : v.leistung;
-  var bottom = v.leistung + ' &middot; ' + v.lichtfarbe + ' &middot; &euro; ' + v.price;
+  var bottom = v.leistung + ' &middot; ' + v.lichtfarbe + ' &middot; &euro; ' + euroWhole(v.price);
   return {top: escHtml(top), bottom: bottom};
 }
 
@@ -2025,7 +2030,7 @@ function renderDetail(slug){
   }).join('');
 
   var rowsHtml = p.variants.map(function(v){
-    return '<tr><td>' + escHtml(p.name) + '</td><td>' + escHtml(v.schaltung) + '</td><td>' + escHtml(v.lichtstrom) + '</td><td>' + escHtml(v.leistung) + '</td><td>' + escHtml(v.lmw) + '</td><td>' + escHtml(v.lichtfarbe) + '</td><td>' + escHtml(v.dims) + '</td><td style="font-family:monospace; font-size:11.5px;">' + escHtml(v.art) + '</td><td>' + escHtml(v.gar) + '</td><td>&euro; ' + v.price + '</td></tr>';
+    return '<tr><td>' + escHtml(p.name) + '</td><td>' + escHtml(v.schaltung) + '</td><td>' + escHtml(v.lichtstrom) + '</td><td>' + escHtml(v.leistung) + '</td><td>' + escHtml(v.lmw) + '</td><td>' + escHtml(v.lichtfarbe) + '</td><td>' + escHtml(v.dims) + '</td><td style="font-family:monospace; font-size:11.5px;">' + escHtml(v.art) + '</td><td>' + escHtml(v.gar) + '</td><td>&euro; ' + euroWhole(v.price) + '</td></tr>';
   }).join('');
   document.getElementById('pd-variant-table').innerHTML = '<tr><th>Type</th><th>Schaltung</th><th>Lichtstrom</th><th>Leistung</th><th>lm/W</th><th>Lichtfarbe</th><th>L&times;B&times;H mm</th><th>Artikelnummer</th><th>Gar.</th><th>Brutto &euro;</th></tr>' + rowsHtml;
 
@@ -2042,7 +2047,7 @@ function renderDetail(slug){
   }
   document.getElementById('pd-related').innerHTML = related.map(function(r){
     var rimg = IMG_BY_SLUG[r.slug] || '';
-    return '<div class="card product-card" data-slug="' + r.slug + '" onclick="go(\'detail\',\'' + r.slug + '\')"><img class="ph" style="height:90px; width:100%; object-fit:contain; background:#fff;" src="' + rimg + '" alt="' + escHtml(r.name + ' – LED-Leuchte von ITECKA für ' + r.catName) + '"><div class="pc-body"><p class="name" style="font-size:13.5px;">' + escHtml(r.name) + '</p><p style="font-size:12px; color:var(--muted-2);">ab &euro; ' + r.variants[0].price + '</p></div></div>';
+    return '<div class="card product-card" data-slug="' + r.slug + '" onclick="go(\'detail\',\'' + r.slug + '\')"><img class="ph" style="height:90px; width:100%; object-fit:contain; background:#fff;" src="' + rimg + '" alt="' + escHtml(r.name + ' – LED-Leuchte von ITECKA für ' + r.catName) + '"><div class="pc-body"><p class="name" style="font-size:13.5px;">' + escHtml(r.name) + '</p><p style="font-size:12px; color:var(--muted-2);">ab &euro; ' + euroWhole(r.variants[0].price) + '</p></div></div>';
   }).join('');
 
   resetReviewForm();
@@ -2208,7 +2213,7 @@ function updateVariantDisplay(){
   var v = p.variants[currentVariantIdx];
   var dimsLabel = (v.dims && v.dims !== '–') ? v.dims : '';
   document.getElementById('pd-variant-label').textContent = (dimsLabel ? dimsLabel + ' · ' : '') + v.leistung;
-  document.getElementById('pd-variant-price').textContent = v.price;
+  document.getElementById('pd-variant-price').textContent = euroWhole(v.price);
   var calcNewInput = document.getElementById('calc-new');
   if(calcNewInput){
     var wattNum = parseFloat(String(v.leistung).replace(',', '.'));
@@ -2567,7 +2572,7 @@ function aiChatAppendProducts(products){
   wrap.style.cssText = 'display:flex; flex-direction:column; gap:8px; align-self:stretch;';
   products.forEach(function(p){
     var min = minPriceOf(p);
-    var priceHtml = min !== null ? 'ab € ' + min.toFixed(2).replace('.', ',') : 'auf Anfrage';
+    var priceHtml = min !== null ? 'ab € ' + euroWhole(min) : 'auf Anfrage';
     var row = document.createElement('div');
     row.style.cssText = 'display:flex; align-items:center; gap:10px; padding:8px; border:1px solid var(--line); border-radius:10px; cursor:pointer; background:var(--surface-2);';
     row.innerHTML =
