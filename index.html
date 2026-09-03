@@ -1461,6 +1461,7 @@ function submitForm(ev){
       document.getElementById('success-panel').classList.add('show');
       cart = [];
       updateCartBadge();
+      saveCart();
       renderCart();
       window.scrollTo({top:0, behavior:'smooth'});
     } else {
@@ -2227,6 +2228,20 @@ function buildVorteile(p){
 
 var cart = [];
 
+function saveCart(){
+  try{ localStorage.setItem('itecka-cart', JSON.stringify(cart)); }catch(e){}
+}
+function loadCart(){
+  try{
+    var raw = localStorage.getItem('itecka-cart');
+    if(!raw) return;
+    var parsed = JSON.parse(raw);
+    if(Array.isArray(parsed)) cart = parsed.filter(function(c){
+      return c && typeof c.slug === 'string' && PRODUCTS_BY_SLUG[c.slug];
+    });
+  }catch(e){}
+}
+
 function stepQty(delta){
   var input = document.getElementById('pd-qty');
   if(!input) return;
@@ -2252,12 +2267,14 @@ function addCurrentToCart(){
   if(existing){ existing.qty += qty; }
   else{ cart.push({slug: currentDetailSlug, variantIdx: currentVariantIdx, qty: qty}); }
   updateCartBadge();
+  saveCart();
   if(qtyInput) qtyInput.value = 1;
 }
 
 function removeFromCart(i){
   cart.splice(i, 1);
   updateCartBadge();
+  saveCart();
   renderCart();
 }
 
@@ -2265,6 +2282,7 @@ function stepCartQty(i, delta){
   if(!cart[i]) return;
   cart[i].qty = Math.max(1, cart[i].qty + delta);
   updateCartBadge();
+  saveCart();
   renderCart();
 }
 function setCartQty(i, val){
@@ -2272,6 +2290,7 @@ function setCartQty(i, val){
   var v = parseInt(val, 10);
   cart[i].qty = (!v || v < 1) ? 1 : v;
   updateCartBadge();
+  saveCart();
   renderCart();
 }
 
@@ -2441,6 +2460,7 @@ var savedLang = null;
 try{ savedLang = localStorage.getItem('itecka-lang'); }catch(e){}
 if(savedLang && I18N_DICT[savedLang]) currentLang = savedLang;
 
+loadCart();
 updateCartBadge();
 applyState(parseStateFromLocation());
 try{
