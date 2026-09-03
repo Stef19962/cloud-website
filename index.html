@@ -993,7 +993,7 @@ table.varianten td{font-size:13px; padding:11px 12px; border-bottom:1px solid va
       <div class="pd-info">
         <span class="badge badge-tech" style="align-self:flex-start;">ITECKA &middot; Aktuell</span>
         <h1 id="pd-detail-title" style="font-size:32px;"></h1>
-        <div class="rating" id="pd-rating-summary" style="margin-top:-6px;"><svg width="14" height="14" viewBox="0 0 20 20" fill="none"><path d="M10 1.6l2.5 5.2 5.7.8-4.1 4 1 5.7-5.1-2.7-5.1 2.7 1-5.7-4.1-4 5.7-.8z" stroke="var(--muted-2)" stroke-width="1.2"/></svg><span style="font-size:12.5px; color:var(--muted-2); margin-left:4px;">Noch keine Bewertungen</span></div>
+        <div class="rating" id="pd-rating-summary" onclick="scrollToReviews()" style="margin-top:-6px; cursor:pointer;"><svg width="14" height="14" viewBox="0 0 20 20" fill="none"><path d="M10 1.6l2.5 5.2 5.7.8-4.1 4 1 5.7-5.1-2.7-5.1 2.7 1-5.7-4.1-4 5.7-.8z" stroke="var(--muted-2)" stroke-width="1.2"/></svg><span style="font-size:12.5px; color:var(--muted-2); margin-left:4px; text-decoration:underline; text-underline-offset:2px;">Noch keine Bewertungen</span></div>
         <p id="pd-desc" style="font-size:15px; color:var(--muted); line-height:1.6; max-width:580px;"></p>
         <div id="pd-badges" style="display:flex; gap:8px; flex-wrap:wrap;"></div>
 
@@ -1064,7 +1064,7 @@ table.varianten td{font-size:13px; padding:11px 12px; border-bottom:1px solid va
       <div class="grid-4" id="pd-related"></div>
     </section>
 
-    <section class="block">
+    <section class="block" id="pd-reviews-section">
       <h2 style="font-size:21px; margin-bottom:16px;">Bewertungen</h2>
       <div id="pd-review-summary" style="margin-bottom:18px;"></div>
       <div id="pd-review-list" style="display:flex; flex-direction:column; gap:12px; margin-bottom:22px;"></div>
@@ -2038,11 +2038,16 @@ function smallStarsHtml(avg){
   }
   return html;
 }
+function scrollToReviews(){
+  var el = document.getElementById('pd-reviews-section');
+  if(el) el.scrollIntoView({behavior:'smooth', block:'start'});
+}
 function renderReviewSummary(data){
   var el = document.getElementById('pd-review-summary');
   var ratingEl = document.getElementById('pd-rating-summary');
   if(!data || !data.count){
     if(el) el.innerHTML = '<p style="font-size:13.5px; color:var(--muted);">Noch keine Bewertungen &ndash; seien Sie die/der Erste!</p>';
+    if(ratingEl) ratingEl.innerHTML = '<svg width="14" height="14" viewBox="0 0 20 20" fill="none"><path d="M10 1.6l2.5 5.2 5.7.8-4.1 4 1 5.7-5.1-2.7-5.1 2.7 1-5.7-4.1-4 5.7-.8z" stroke="var(--muted-2)" stroke-width="1.2"/></svg><span style="font-size:12.5px; color:var(--muted-2); margin-left:4px; text-decoration:underline; text-underline-offset:2px;">Noch keine Bewertungen</span>';
     return;
   }
   var fmt = new Intl.NumberFormat('de-AT', {maximumFractionDigits:1}).format(data.avg);
@@ -2055,7 +2060,7 @@ function renderReviewSummary(data){
     '</div>';
   }
   if(ratingEl){
-    ratingEl.innerHTML = '<div style="display:flex; align-items:center;">' + smallStarsHtml(data.avg) + '</div><span style="font-size:12.5px; color:var(--muted-2); margin-left:4px;">' + fmt + ' &middot; ' + label + '</span>';
+    ratingEl.innerHTML = '<div style="display:flex; align-items:center;">' + smallStarsHtml(data.avg) + '</div><span style="font-size:12.5px; color:var(--muted-2); margin-left:4px; text-decoration:underline; text-underline-offset:2px;">' + fmt + ' &middot; ' + label + '</span>';
   }
 }
 function renderReviewList(data){
