@@ -205,7 +205,8 @@ section.block{padding:0 0 60px;}
 .usp-grid{display:grid; grid-template-columns:1fr; gap:18px;}
 .usp{display:flex; gap:12px;}
 
-footer{margin-top:20px; background:var(--dark-bg); color:#fff; padding:48px 48px 32px;}
+footer{margin-top:20px; background:var(--dark-bg); color:#fff; padding:48px 20px 32px;}
+@media (min-width:860px){ footer{padding:48px 48px 32px;} }
 footer .cols{max-width:1240px; margin:0 auto; display:grid; grid-template-columns:1fr; gap:26px; position:relative; z-index:0;}
 #footer-unternehmen{position:relative;}
 footer .cols-watermark{position:absolute; top:-24px; bottom:auto; right:0; left:auto; width:auto; height:170px; object-fit:contain; opacity:0.16; pointer-events:none; z-index:-1;}
