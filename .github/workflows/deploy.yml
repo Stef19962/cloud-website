@@ -19,7 +19,7 @@ jobs:
           <?php
           define('NOTION_TOKEN', '${{ secrets.NOTION_ANFRAGEN_TOKEN }}');
           define('NOTION_DATABASE_ID', '3fafbad5-a3be-41d5-ab71-7779ddf32af3');
-          define('NOTION_REVIEWS_DATABASE_ID', 'bda00fc8-50e4-4e69-b798-567691b1cd8b');
+          define('NOTION_REVIEWS_DATABASE_ID', 'b645ea09-5fd7-4c2d-9211-2895f845203e');
           PHPEOF
 
       - name: Deploy via FTPS

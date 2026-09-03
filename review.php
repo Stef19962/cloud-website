@@ -73,15 +73,18 @@ function itecka_review_rich_text($text) {
 }
 
 $titleText = $produktname !== '' ? ($produktname . ' – ' . $name . ' (' . $sterne . '★)') : ($name . ' (' . $sterne . '★)');
+$bezug = ($produktname !== '' ? $produktname . ' · ' : '') . $slug;
+$sterneLabel = $sterne === 1 ? '1 Stern' : $sterne . ' Sterne';
 
 $properties = [
     'Bewertung' => ['title' => itecka_review_rich_text($titleText)],
-    'Produkt-Slug' => ['rich_text' => itecka_review_rich_text($slug)],
-    'Name' => ['rich_text' => itecka_review_rich_text($name)],
-    'Sterne' => ['number' => $sterne],
-    'Status' => ['select' => ['name' => 'Neu']],
+    'Produkt / Bezug' => ['rich_text' => itecka_review_rich_text($bezug)],
+    'Name / Kunde' => ['rich_text' => itecka_review_rich_text($name)],
+    'Bewertung / Sterne' => ['select' => ['name' => $sterneLabel]],
+    'Status' => ['status' => ['name' => 'Neu']],
+    'Quelle' => ['select' => ['name' => 'Website']],
+    'Freigabe für Website' => ['checkbox' => false],
 ];
-if ($produktname !== '') $properties['Produktname'] = ['rich_text' => itecka_review_rich_text($produktname)];
 if ($kommentar !== '') $properties['Kommentar'] = ['rich_text' => itecka_review_rich_text($kommentar)];
 if ($email !== '') $properties['E-Mail'] = ['email' => $email];
 

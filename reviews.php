@@ -31,12 +31,13 @@ if ($slug === '' || strlen($slug) > 200) {
 $payload = json_encode([
     'filter' => [
         'and' => [
-            ['property' => 'Produkt-Slug', 'rich_text' => ['equals' => $slug]],
-            ['property' => 'Status', 'select' => ['equals' => 'Freigegeben']],
+            ['property' => 'Produkt / Bezug', 'rich_text' => ['ends_with' => $slug]],
+            ['property' => 'Freigabe für Website', 'checkbox' => ['equals' => true]],
+            ['property' => 'Status', 'status' => ['equals' => 'Freigegeben']],
         ],
     ],
     'sorts' => [
-        ['property' => 'Eingegangen', 'direction' => 'descending'],
+        ['property' => 'Erstellt am', 'direction' => 'descending'],
     ],
     'page_size' => 50,
 ]);
@@ -81,11 +82,15 @@ $reviews = [];
 $sum = 0;
 foreach ($results as $page) {
     $props = isset($page['properties']) ? $page['properties'] : [];
-    $sterne = isset($props['Sterne']['number']) ? (int) $props['Sterne']['number'] : 0;
+    $sterneLabel = isset($props['Bewertung / Sterne']['select']['name']) ? $props['Bewertung / Sterne']['select']['name'] : '';
+    $sterne = 0;
+    if (preg_match('/(\d+)/', $sterneLabel, $m)) {
+        $sterne = (int) $m[1];
+    }
     if ($sterne < 1 || $sterne > 5) continue;
-    $name = itecka_plain_text($props['Name']['rich_text'] ?? []);
+    $name = itecka_plain_text($props['Name / Kunde']['rich_text'] ?? []);
     $kommentar = itecka_plain_text($props['Kommentar']['rich_text'] ?? []);
-    $datum = isset($props['Eingegangen']['created_time']) ? $props['Eingegangen']['created_time'] : '';
+    $datum = isset($props['Erstellt am']['created_time']) ? $props['Erstellt am']['created_time'] : '';
     $reviews[] = [
         'name' => $name !== '' ? $name : 'Anonym',
         'sterne' => $sterne,
