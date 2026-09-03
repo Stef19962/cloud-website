@@ -42,6 +42,7 @@
 <title>ITECKA GmbH &ndash; LED-Beleuchtung f&uuml;r Industrie, B&uuml;ro &amp; Au&szlig;enbereich | Graz</title>
 <meta name="description" content="LED-Beleuchtungsl&ouml;sungen f&uuml;r B&uuml;ro, Industrie und Au&szlig;enbereich &ndash; Planung, Montage und Sonderanfertigungen direkt aus Graz. Jetzt unverbindlich anfragen.">
 <link rel="canonical" href="https://www.itecka.com/">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"LocalBusiness","name":"ITECKA GmbH","url":"https://www.itecka.com/","telephone":"+43 664 666 0561","email":"office@itecka.com","image":"https://www.itecka.com/apple-touch-icon.png","priceRange":"€€","address":{"@type":"PostalAddress","streetAddress":"Weinitzenstraße 20e","postalCode":"8045","addressLocality":"Graz","addressCountry":"AT"}}</script>
 <link rel="icon" href="/favicon.ico" sizes="any">
 <link rel="icon" href="/favicon-32x32.png" type="image/png" sizes="32x32">
 <link rel="icon" href="/favicon-16x16.png" type="image/png" sizes="16x16">
@@ -1431,6 +1432,45 @@ function updateSeoMeta(state){
   if(descEl) descEl.setAttribute('content', desc);
   var canonicalEl = document.querySelector('link[rel="canonical"]');
   if(canonicalEl) canonicalEl.setAttribute('href', SEO_BASE + stateToUrl(state).split('?')[0]);
+  updateProductJsonLd(state);
+}
+function updateProductJsonLd(state){
+  var existing = document.getElementById('product-jsonld');
+  var p = (state.page === 'detail' && state.slug && typeof PRODUCTS_BY_SLUG !== 'undefined') ? PRODUCTS_BY_SLUG[state.slug] : null;
+  if(!p){
+    if(existing) existing.remove();
+    return;
+  }
+  var prices = p.variants.map(function(v){
+    return parseFloat(String(v.price).replace(/\./g,'').replace(',', '.'));
+  }).filter(function(n){ return !isNaN(n); });
+  if(!prices.length){
+    if(existing) existing.remove();
+    return;
+  }
+  var data = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    "name": p.name,
+    "description": p.desc,
+    "brand": {"@type": "Brand", "name": "ITECKA"},
+    "offers": {
+      "@type": "AggregateOffer",
+      "priceCurrency": "EUR",
+      "lowPrice": Math.min.apply(null, prices),
+      "highPrice": Math.max.apply(null, prices),
+      "offerCount": p.variants.length,
+      "availability": "https://schema.org/InStock",
+      "url": SEO_BASE + '/produkte/' + encodeURIComponent(p.slug)
+    }
+  };
+  if(!existing){
+    existing = document.createElement('script');
+    existing.type = 'application/ld+json';
+    existing.id = 'product-jsonld';
+    document.head.appendChild(existing);
+  }
+  existing.textContent = JSON.stringify(data);
 }
 function buildCartSummary(){
   var produkt = [], variante = [], art = [], totalQty = 0;
