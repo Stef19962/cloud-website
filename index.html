@@ -186,6 +186,20 @@ section.block{padding:0 0 60px;}
 .proj-card .img:not([style*="background-image"]){background:linear-gradient(135deg,#33332F,#1E1E1C);}
 .proj-card .cap{padding:12px; background:var(--surface);}
 
+/* Kennzahlen / Stats */
+.stats-panel{background:var(--dark-bg); border:1px solid var(--dark-line); border-radius:16px; padding:40px 22px; text-align:center;}
+@media (min-width:860px){ .stats-panel{padding:52px 48px;} }
+.stats-eyebrow{font-family:'Archivo',system-ui,sans-serif; font-size:12px; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; color:var(--dark-amber); margin:0 0 12px;}
+.stats-panel h2{font-size:27px; color:#fff; max-width:560px; margin:0 auto;}
+.stats-intro{font-size:15px; color:var(--dark-muted); max-width:560px; margin:12px auto 0; line-height:1.6;}
+.stats-grid{display:grid; grid-template-columns:1fr; gap:14px; margin-top:32px;}
+@media (min-width:860px){ .stats-grid{grid-template-columns:repeat(3,1fr); gap:18px;} }
+.stat-card{background:var(--dark-surface); border:1px solid var(--dark-line); border-radius:12px; padding:26px 18px; display:flex; flex-direction:column; align-items:center; gap:8px;}
+.stat-num{font-family:'Archivo',system-ui,sans-serif; font-weight:800; font-size:clamp(28px,6vw,40px); line-height:1.1; color:#fff; margin:6px 0 0; white-space:nowrap; font-variant-numeric:tabular-nums;}
+.stat-label{font-size:13.5px; color:var(--dark-muted); margin:0;}
+.stats-footnote{font-size:11.5px; color:var(--dark-muted); max-width:760px; margin:28px auto 0; line-height:1.65; text-align:left;}
+@media (min-width:860px){ .stats-footnote{text-align:center;} }
+
 .product-card{overflow:hidden; display:flex; flex-direction:column; cursor:pointer; transition:box-shadow .15s;}
 .product-card:hover{box-shadow:0 4px 16px -6px rgba(20,30,25,0.22);}
 .ph{background:var(--surface-2); display:flex; align-items:center; justify-content:center; font-size:12px; color:var(--muted-2);}
@@ -445,8 +459,75 @@ table.varianten td{font-size:13px; padding:11px 12px; border-bottom:1px solid va
       </div>
     </section>
 
+    <section class="block" aria-labelledby="kennzahlen-heading">
+      <div class="stats-panel">
+        <p class="stats-eyebrow">Erfahrung, die sich messen l&auml;sst</p>
+        <h2 id="kennzahlen-heading">Qualit&auml;t, die sich im Einsatz beweist</h2>
+        <p class="stats-intro">Unsere Beleuchtungsl&ouml;sungen bew&auml;hren sich t&auml;glich in Industrie, Gewerbe und Au&szlig;enbereichen.</p>
+        <div class="stats-grid">
+          <div class="stat-card">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.6 10.8c.6.45 1.1 1.2 1.1 2.2h5c0-1 .5-1.75 1.1-2.2A6 6 0 0 0 12 3Z" stroke="var(--dark-amber)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <p class="stat-num" data-count-target="10000" data-count-decimals="0" data-count-prefix="&asymp; ">&asymp; 10.000</p>
+            <p class="stat-label">Leuchten im Einsatz</p>
+          </div>
+          <div class="stat-card">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3l7 3v5c0 4.5-3 7.7-7 10-4-2.3-7-5.5-7-10V6l7-3Z" stroke="var(--dark-amber)" stroke-width="1.7" stroke-linejoin="round" stroke-linecap="round"/><path d="M9 12l2 2 4-4" stroke="var(--dark-amber)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <p class="stat-num" data-count-target="13" data-count-decimals="0">13</p>
+            <p class="stat-label">dokumentierte Ausf&auml;lle</p>
+          </div>
+          <div class="stat-card">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-7M20 20H4" stroke="var(--dark-amber)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <p class="stat-num" data-count-target="0.13" data-count-decimals="2" data-count-suffix=" %">0,13&nbsp;%</p>
+            <p class="stat-label">rechnerische Ausfallquote*</p>
+          </div>
+        </div>
+        <p class="stats-footnote">*Die Gesamtzahl basiert teilweise auf einer internen Hochrechnung aus Projekt-, Liefer- und Partnerdaten. Die Ausfallzahl umfasst die ITECKA bislang bekannten und dokumentierten F&auml;lle. Stand: September 2026.</p>
+      </div>
+    </section>
+    <script>
+    (function(){
+      var nums = document.querySelectorAll('.stat-num[data-count-target]');
+      if(!nums.length) return;
+      var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if(reduceMotion) return;
+      function fmt(val, decimals){
+        var parts = val.toFixed(decimals).split('.');
+        var intPart = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+        return decimals > 0 ? intPart + ',' + parts[1] : intPart;
+      }
+      function animateCount(el){
+        var target = parseFloat(el.getAttribute('data-count-target'));
+        var decimals = parseInt(el.getAttribute('data-count-decimals') || '0', 10);
+        var prefix = el.getAttribute('data-count-prefix') || '';
+        var suffix = el.getAttribute('data-count-suffix') || '';
+        var duration = 1100, start = null;
+        function step(ts){
+          if(start === null) start = ts;
+          var progress = Math.min((ts - start) / duration, 1);
+          var eased = 1 - Math.pow(1 - progress, 3);
+          el.textContent = prefix + fmt(target * eased, decimals) + suffix;
+          if(progress < 1) requestAnimationFrame(step);
+          else el.textContent = prefix + fmt(target, decimals) + suffix;
+        }
+        requestAnimationFrame(step);
+      }
+      if('IntersectionObserver' in window){
+        var seen = new WeakSet();
+        var io = new IntersectionObserver(function(entries){
+          entries.forEach(function(entry){
+            if(entry.isIntersecting && !seen.has(entry.target)){
+              seen.add(entry.target);
+              animateCount(entry.target);
+            }
+          });
+        }, {threshold:0.4});
+        nums.forEach(function(el){ io.observe(el); });
+      }
+    })();
+    </script>
+
     <section class="block">
-    
+
       <div class="block-head"><h2>Neue Produkte</h2><a onclick="go('products')">Alle Produkte ansehen &rarr;</a></div>
       <div class="grid-4">
         <div class="card product-card" data-slug="office-aufbauleuchte" onclick="go('detail','office-aufbauleuchte')">
