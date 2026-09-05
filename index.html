@@ -1328,6 +1328,12 @@ table.varianten td{font-size:13px; padding:11px 12px; border-bottom:1px solid va
     </div>
 
     <section class="block" style="max-width:820px; margin:0 auto;">
+      <h2 style="font-size:22px; margin-bottom:14px;">Unsere LED Solar Stra&szlig;enlaternen im Sortiment</h2>
+      <p style="font-size:14.5px; color:var(--ink); line-height:1.75; margin-bottom:16px;">ITECKA f&uuml;hrt zwei autarke Solar-Stra&szlig;enleuchten mit integriertem Solarpanel, Akku und Steuerung &ndash; ohne Netzanschluss einsatzbereit:</p>
+      <div id="ledsolar-products" class="grid-4"></div>
+    </section>
+
+    <section class="block" style="max-width:820px; margin:0 auto;">
       <h2 style="font-size:24px; margin-bottom:14px;">Warum LED Solar Stra&szlig;enlaternen immer gefragter werden</h2>
       <p style="font-size:14.5px; color:var(--ink); line-height:1.75;">Viele Unternehmen, Gemeinden und Projektbetreiber suchen nach Beleuchtungsl&ouml;sungen, die schnell montiert werden k&ouml;nnen, langfristig g&uuml;nstiger sind und gleichzeitig nachhaltiger wirken. Klassische Stra&szlig;enbeleuchtung ben&ouml;tigt Kabel, Stromanschluss, Planung, Grabarbeiten und laufende Energiekosten.</p>
       <p style="font-size:14.5px; color:var(--ink); line-height:1.75;">Eine LED Solar Stra&szlig;enlaterne reduziert viele dieser Aufwandspunkte. Das macht sie besonders interessant f&uuml;r neue Projekte, Nachr&uuml;stungen oder Fl&auml;chen, bei denen eine Verkabelung teuer oder technisch schwierig w&auml;re.</p>
@@ -1715,6 +1721,9 @@ function go(id, slug){
   }
   if(id === 'products'){
     applyProductVisibility();
+  }
+  if(id === 'ledsolar'){
+    renderLedSolarProducts();
   }
   document.querySelectorAll('.page').forEach(function(p){ p.classList.remove('active'); });
   var target = document.getElementById('page-' + id) || document.getElementById('page-home');
@@ -2477,6 +2486,17 @@ function variantShortLabel(v){
   return {top: escHtml(top), bottom: bottom};
 }
 
+function renderLedSolarProducts(){
+  var container = document.getElementById('ledsolar-products');
+  if(!container) return;
+  var slugs = ['led-street-solar-01', 'led-street-solar-02'];
+  container.innerHTML = slugs.map(function(slug){
+    var p = PRODUCTS_BY_SLUG[slug];
+    if(!p) return '';
+    var img = IMG_BY_SLUG[slug] || '';
+    return '<div class="card product-card" data-slug="' + slug + '" onclick="go(\'detail\',\'' + slug + '\')"><img class="ph" style="height:100px; width:100%; object-fit:contain; background:#fff;" src="' + img + '" alt="' + escHtml(p.name + ' – LED-Leuchte von ITECKA für ' + p.catName) + '"><div class="pc-body"><p class="name" style="font-size:13.5px;">' + escHtml(p.name) + '</p><p style="font-size:12px; color:var(--muted-2);">ab &euro; ' + euroWhole(p.variants[0].price) + '</p></div></div>';
+  }).join('');
+}
 function renderDetail(slug){
   var p = PRODUCTS_BY_SLUG[slug];
   if(!p) return;
