@@ -1347,7 +1347,7 @@ table.varianten td{font-size:13px; padding:11px 12px; border-bottom:1px solid va
       <div class="card" style="padding:20px; margin-top:22px;">
         <p style="font-weight:700; font-size:15px; margin-bottom:10px;">Rechenbeispiel: 200&nbsp;m&sup2; Lagerhalle</p>
         <p style="font-size:14px; color:var(--muted); line-height:1.8;">
-          20 Halogenstrahler à 150&nbsp;W &rarr; 20 LED-Hallenstrahler à 40&nbsp;W<br>
+          20 Halogenstrahler à 150&nbsp;W &rarr; 20 <a onclick="goCategory('industrie')" style="cursor:pointer;">LED-Hallenstrahler</a> à 40&nbsp;W<br>
           Betrieb: 10&nbsp;Std./Tag, 260&nbsp;Tage/Jahr, Strompreis 0,28&nbsp;&euro;/kWh<br>
           <strong>Ergebnis: ca. 5.720&nbsp;kWh und rund 1.600&nbsp;&euro; Ersparnis pro Jahr – bei 73&nbsp;% weniger Stromverbrauch.</strong>
         </p>
@@ -1867,7 +1867,7 @@ function updateSeoMeta(state){
   } else if(state.page === 'about'){
     title = 'Über uns – LED-Beleuchtung aus Graz | ITECKA';
   } else if(state.page === 'stromsparrechner'){
-    title = 'Stromsparrechner für LED-Beleuchtung | ITECKA';
+    title = 'Stromsparrechner für LED-Beleuchtung – kostenlos berechnen | ITECKA';
     desc = 'Stromsparrechner von ITECKA aus Graz: Berechnen Sie kostenlos, wie viel eine LED-Umrüstung an Stromkosten & CO2 spart – für Betriebe in der Steiermark.';
   } else if(state.page === 'ledsolar'){
     title = 'LED Solar Straßenlaternen – Vorteile, Nachteile & Wirtschaftlichkeit';
@@ -1889,6 +1889,7 @@ function updateSeoMeta(state){
   if(canonicalEl) canonicalEl.setAttribute('href', SEO_BASE + stateToUrl(state).split('?')[0]);
   updateProductJsonLd(state);
   updateFaqJsonLd(state);
+  updateBreadcrumbJsonLd(state);
 }
 var FAQ_BY_PAGE = {
   stromsparrechner: [
@@ -1928,6 +1929,53 @@ function updateFaqJsonLd(state){
     existing = document.createElement('script');
     existing.type = 'application/ld+json';
     existing.id = 'faq-jsonld';
+    document.head.appendChild(existing);
+  }
+  existing.textContent = JSON.stringify(data);
+}
+var BREADCRUMB_LABELS = {
+  products: 'Produkte',
+  request: 'Anfrage-Warenkorb',
+  about: 'Über uns',
+  stromsparrechner: 'Stromsparrechner',
+  ledsolar: 'LED Solar Straßenlaternen',
+  kontakt: 'Kontakt',
+  impressum: 'Impressum',
+  datenschutz: 'Datenschutz'
+};
+function updateBreadcrumbJsonLd(state){
+  var existing = document.getElementById('breadcrumb-jsonld');
+  var items = null;
+  if(state.page === 'detail' && state.slug){
+    var p = (typeof PRODUCTS_BY_SLUG !== 'undefined') ? PRODUCTS_BY_SLUG[state.slug] : null;
+    if(p){
+      items = [
+        {name: 'Startseite', url: SEO_BASE + '/'},
+        {name: p.catName, url: SEO_BASE + '/produkte?cat=' + encodeURIComponent(p.cat)},
+        {name: p.name, url: SEO_BASE + stateToUrl(state)}
+      ];
+    }
+  } else if(BREADCRUMB_LABELS[state.page]){
+    items = [
+      {name: 'Startseite', url: SEO_BASE + '/'},
+      {name: BREADCRUMB_LABELS[state.page], url: SEO_BASE + stateToUrl(state)}
+    ];
+  }
+  if(!items){
+    if(existing) existing.remove();
+    return;
+  }
+  var data = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": items.map(function(it, i){
+      return {"@type": "ListItem", "position": i + 1, "name": it.name, "item": it.url};
+    })
+  };
+  if(!existing){
+    existing = document.createElement('script');
+    existing.type = 'application/ld+json';
+    existing.id = 'breadcrumb-jsonld';
     document.head.appendChild(existing);
   }
   existing.textContent = JSON.stringify(data);
