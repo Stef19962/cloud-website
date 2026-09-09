@@ -1,3 +1,12 @@
+# Das Pre-Rendering legt ein echtes produkte/-Verzeichnis an (für
+# produkte/<slug>.html). Ohne dies würde Apache /produkte (ohne Slash, die
+# kanonische Sitemap-URL) automatisch auf /produkte/ umleiten, weil der Pfad
+# jetzt zufällig auf ein echtes Verzeichnis matcht -- genau die Art
+# Weiterleitung, die vermieden werden soll.
+<IfModule mod_dir.c>
+  DirectorySlash Off
+</IfModule>
+
 <IfModule mod_headers.c>
   <FilesMatch "\.(html|php)$">
     Header set Cache-Control "no-cache, no-store, must-revalidate"
@@ -7,6 +16,49 @@
 </IfModule>
 <IfModule mod_expires.c>
   ExpiresActive Off
+</IfModule>
+
+# Alte WordPress-URLs (vor dem Relaunch): 301 auf das jeweilige neue Ziel,
+# damit vorhandenes Google-Vertrauen/Ranking mitwandert statt verloren zu
+# gehen, und Besucher, die über alte Suchergebnisse/Links reinkommen, auf
+# passendem statt zufälligem Inhalt landen. Nur Pfade mit klarem neuen
+# Gegenstück -- echte tote Ressourcen (z. B. /wp-content/*) bleiben bewusst
+# ein normaler 404, ein Redirect davon auf die Startseite wäre ein
+# Soft-404-Muster, das Google eher schadet als hilft.
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+
+  RewriteRule ^ueber-uns/?$ /ueber-itecka [R=301,L]
+  RewriteRule ^produkt/led-skyline-updown-25w-100w/?$ /produkte/led-updown-01-series [R=301,L]
+  RewriteRule ^author/admin/?$ / [R=301,L]
+  RewriteRule ^home/?$ / [R=301,L]
+
+  RewriteCond %{QUERY_STRING} ^page_id=
+  RewriteRule ^$ /? [R=301,L]
+
+  RewriteCond %{QUERY_STRING} ^page=home$
+  RewriteRule ^$ /? [R=301,L]
+
+  # Kanonische URLs ohne trailing slash: alles mit "/" am Ende auf die
+  # Version ohne "/" umleiten (das einzige echte Verzeichnis, produkte/,
+  # hat ohnehin keinen eigenen Index und soll nie direkt aufgerufen
+  # werden). Ohne dies gerät z. B. /produkte/<slug>/ in eine
+  # Rewrite-Schleife, und /produkte/ liefert 403 statt der Übersicht.
+  RewriteCond %{REQUEST_URI} ^(.+)/$
+  RewriteRule ^ %1 [R=301,L]
+</IfModule>
+
+# Pre-rendered pages: if a same-named .html sibling exists for the request
+# (e.g. /produkte/led-panel-01-series -> produkte/led-panel-01-series.html),
+# serve it directly. These carry route-specific <title>/<meta description>/
+# <link rel="canonical"> baked in server-side instead of only via JS, so
+# crawlers see correct, distinct metadata per page. The requested URL never
+# changes -- this is an internal rewrite, not an external redirect.
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME}.html -f
+  RewriteRule ^(.*)$ $1.html [L]
 </IfModule>
 
 # Clean URLs (e.g. /produkte/led-panel-01-series): serve index.html for any
