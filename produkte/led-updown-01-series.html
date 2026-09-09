@@ -3026,6 +3026,9 @@ function renderCart(){
   }).join('');
 }
 
+document.querySelectorAll('[data-img-id]').forEach(function(el){var v=ITECKA_IMAGES[el.getAttribute('data-img-id')]; if(v) el.src=v;});
+document.querySelectorAll('[data-img-bg-id]').forEach(function(el){var v=ITECKA_IMAGES[el.getAttribute('data-img-bg-id')]; if(v) el.style.backgroundImage="url('"+v+"')";});
+
 try{ if('scrollRestoration' in history) history.scrollRestoration = 'manual'; }catch(e){}
 buildImgMap();
 document.querySelectorAll('.crumb').forEach(function(el){
@@ -3146,7 +3149,6 @@ var savedLang = null;
 try{ savedLang = localStorage.getItem('itecka-lang'); }catch(e){}
 if(savedLang && I18N_DICT[savedLang]) currentLang = savedLang;
 
-document.querySelectorAll('[data-img-id]').forEach(function(el){var v=ITECKA_IMAGES[el.getAttribute('data-img-id')]; if(v) el.src=v;});document.querySelectorAll('[data-img-bg-id]').forEach(function(el){var v=ITECKA_IMAGES[el.getAttribute('data-img-bg-id')]; if(v) el.style.backgroundImage="url('"+v+"')";});
 loadCart();
 updateCartBadge();
 applyState(parseStateFromLocation());
