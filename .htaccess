@@ -9,6 +9,19 @@
   ExpiresActive Off
 </IfModule>
 
+# Pre-rendered pages: if a same-named .html sibling exists for the request
+# (e.g. /produkte/led-panel-01-series -> produkte/led-panel-01-series.html),
+# serve it directly. These carry route-specific <title>/<meta description>/
+# <link rel="canonical"> baked in server-side instead of only via JS, so
+# crawlers see correct, distinct metadata per page. The requested URL never
+# changes -- this is an internal rewrite, not an external redirect.
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME}.html -f
+  RewriteRule ^(.*)$ $1.html [L]
+</IfModule>
+
 # Clean URLs (e.g. /produkte/led-panel-01-series): serve index.html for any
 # request that isn't an existing file or directory, so the single-page app's
 # own JS router can read the path. Real files (PHP endpoints, the PDF,
