@@ -13,6 +13,17 @@
     Header set Pragma "no-cache"
     Header set Expires "0"
   </FilesMatch>
+  # images.js: nicht "no-store" wie HTML/PHP, sonst würde der Browser die
+  # 6,6 MB bei jedem Seitenaufruf neu laden statt sie zu behalten -- genau
+  # der Cache-Vorteil, für den die Bilder in diese Datei ausgelagert wurden.
+  # "no-cache" (ohne "no-store") reicht: der Browser behält die Datei im
+  # Cache, muss aber bei jedem Aufruf beim Server nachfragen ("hat sich was
+  # geändert?"). Unverändert -> Server antwortet mit 304, kein Neu-Download.
+  # Geändert (z. B. nach diesem Fix) -> sofort die neue Version, ohne dass
+  # jemand manuell den Browser-Cache leeren muss.
+  <FilesMatch "\.js$">
+    Header set Cache-Control "no-cache, must-revalidate"
+  </FilesMatch>
 </IfModule>
 <IfModule mod_expires.c>
   ExpiresActive Off
