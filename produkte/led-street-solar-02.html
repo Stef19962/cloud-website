@@ -133,7 +133,7 @@ a:focus-visible, button:focus-visible, [tabindex]:focus-visible{outline:2px soli
 @media (prefers-reduced-motion: reduce){.brand-spark{animation:none; display:none;}}
 .brand span{font-family:'Archivo',sans-serif; font-weight:800; font-size:20px; color:var(--ink);}
 .nav-links{display:none;}
-.nav-links a{color:var(--ink); font-size:14.5px; font-weight:600; cursor:pointer;}
+.nav-links a{color:var(--ink); font-size:14.5px; font-weight:600; cursor:pointer; transition:color .15s ease;}
 .nav-links a:hover{color:var(--link);}
 .lang-switch{display:flex; gap:2px; margin-left:6px; padding-left:14px; border-left:1px solid rgba(255,255,255,0.18);}
 .lang-btn{display:inline-flex; align-items:center; gap:5px; background:none; border:none; border-radius:6px; padding:4px 7px; font-size:12px; font-weight:700; letter-spacing:0.02em; cursor:pointer; color:var(--muted-2); font-family:inherit;}
@@ -204,8 +204,8 @@ section.block{padding:0 0 60px;}
 .stats-footnote{font-size:11.5px; color:var(--dark-muted); max-width:760px; margin:28px auto 0; line-height:1.65; text-align:left;}
 @media (min-width:860px){ .stats-footnote{text-align:center;} }
 
-.product-card{overflow:hidden; display:flex; flex-direction:column; cursor:pointer; transition:box-shadow .15s;}
-.product-card:hover{box-shadow:0 4px 16px -6px rgba(20,30,25,0.22);}
+.product-card{overflow:hidden; display:flex; flex-direction:column; cursor:pointer; transition:box-shadow .2s ease, transform .2s ease;}
+.product-card:hover{box-shadow:0 10px 24px -8px rgba(20,30,25,0.28); transform:translateY(-3px);}
 .ph{background:var(--surface-2); display:flex; align-items:center; justify-content:center; font-size:12px; color:var(--muted-2);}
 .pc-body{padding:16px; display:flex; flex-direction:column; gap:8px;}
 .pc-body .name{font-weight:700; font-size:15px;}
@@ -325,10 +325,19 @@ table.varianten td{font-size:13px; padding:11px 12px; border-bottom:1px solid va
 .crumb a:hover{color:var(--link);}
 
 .products-grid{display:grid; grid-template-columns:1fr 1fr; gap:12px;}
+@media (min-width:860px){ .products-grid{grid-template-columns:repeat(3,1fr); gap:16px;} }
 
 /* Variant picker (product detail) */
-.variant-picker{display:flex; gap:8px; overflow-x:auto; padding-bottom:2px; -webkit-overflow-scrolling:touch;}
-.variant-pill{flex-shrink:0; display:flex; flex-direction:column; align-items:flex-start; gap:2px; background:var(--surface); border:1.5px solid var(--line); border-radius:10px; padding:8px 14px; font-family:'Public Sans',sans-serif; font-size:13.5px; font-weight:700; color:var(--ink); cursor:pointer;}
+.variant-picker-wrap{position:relative;}
+.variant-picker-wrap::before,.variant-picker-wrap::after{content:''; position:absolute; top:0; bottom:2px; width:32px; pointer-events:none; z-index:1; opacity:0; transition:opacity .2s ease;}
+.variant-picker-wrap::before{left:0; background:linear-gradient(to right, var(--bg), rgba(0,0,0,0));}
+.variant-picker-wrap::after{right:0; background:linear-gradient(to left, var(--bg), rgba(0,0,0,0));}
+.variant-picker-wrap.has-overflow-left::before{opacity:1;}
+.variant-picker-wrap.has-overflow-right::after{opacity:1;}
+.variant-picker{display:flex; gap:8px; overflow-x:auto; padding-bottom:2px; -webkit-overflow-scrolling:touch; scroll-snap-type:x proximity;}
+.variant-pill{flex-shrink:0; scroll-snap-align:start; display:flex; flex-direction:column; align-items:flex-start; gap:2px; background:var(--surface); border:1.5px solid var(--line); border-radius:10px; padding:8px 14px; font-family:'Public Sans',sans-serif; font-size:13.5px; font-weight:700; color:var(--ink); cursor:pointer; transition:border-color .15s ease, background-color .15s ease, transform .1s ease;}
+.variant-pill:hover{border-color:var(--muted-2);}
+.variant-pill:active{transform:scale(.96);}
 .variant-pill span{font-size:11px; font-weight:500; color:var(--muted-2);}
 .variant-pill.active{border-color:var(--accent); background:var(--accent-soft);}
 .variant-pill.active span{color:var(--accent-soft-ink);}
@@ -1115,7 +1124,9 @@ table.varianten td{font-size:13px; padding:11px 12px; border-bottom:1px solid va
 
         <div style="display:flex; flex-direction:column; gap:8px; padding-top:6px;">
           <label style="font-size:12.5px; font-weight:600; color:var(--muted);">Variante w&auml;hlen</label>
-          <div class="variant-picker" id="pd-variant-picker"></div>
+          <div class="variant-picker-wrap">
+            <div class="variant-picker" id="pd-variant-picker"></div>
+          </div>
         </div>
 
         <div style="padding:10px 0 4px;">
@@ -2656,6 +2667,15 @@ function escHtml(s){
   return String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 }
 
+function updateVariantPickerFade(){
+  var picker = document.getElementById('pd-variant-picker');
+  var wrap = picker && picker.parentElement;
+  if(!picker || !wrap || !wrap.classList.contains('variant-picker-wrap')) return;
+  var maxScroll = picker.scrollWidth - picker.clientWidth;
+  wrap.classList.toggle('has-overflow-left', picker.scrollLeft > 4);
+  wrap.classList.toggle('has-overflow-right', picker.scrollLeft < maxScroll - 4);
+}
+
 function variantShortLabel(v){
   var top = (v.dims && v.dims !== '–' && v.dims !== 'auf Anfrage') ? v.dims : v.leistung;
   var bottom = v.leistung + ' &middot; ' + v.lichtfarbe + ' &middot; &euro; ' + euroWhole(v.price);
@@ -2706,6 +2726,16 @@ function renderDetail(slug){
     var lbl = variantShortLabel(v);
     return '<button type="button" class="variant-pill' + (i===0?' active':'') + '" onclick="selectVariant(' + i + ', this)">' + lbl.top + '<span>' + lbl.bottom + '</span></button>';
   }).join('');
+  (function(){
+    var picker = document.getElementById('pd-variant-picker');
+    picker.scrollLeft = 0;
+    requestAnimationFrame(updateVariantPickerFade);
+    if(!picker.dataset.fadeBound){
+      picker.addEventListener('scroll', updateVariantPickerFade, {passive:true});
+      window.addEventListener('resize', updateVariantPickerFade);
+      picker.dataset.fadeBound = '1';
+    }
+  })();
 
   var rowsHtml = p.variants.map(function(v){
     return '<tr><td>' + escHtml(p.name) + '</td><td>' + escHtml(v.schaltung) + '</td><td>' + escHtml(v.lichtstrom) + '</td><td>' + escHtml(v.leistung) + '</td><td>' + escHtml(v.lmw) + '</td><td>' + escHtml(v.lichtfarbe) + '</td><td>' + escHtml(v.dims) + '</td><td style="font-family:monospace; font-size:11.5px;">' + escHtml(v.art) + '</td><td>' + escHtml(v.gar) + '</td><td>&euro; ' + euroWhole(v.price) + '</td></tr>';
