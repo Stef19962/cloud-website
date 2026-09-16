@@ -101,7 +101,7 @@ a:focus-visible, button:focus-visible, [tabindex]:focus-visible{outline:2px soli
 /* Header */
 .site-header{position:static; display:flex; align-items:center; justify-content:space-between; padding:14px 20px; background:#4F4F49; border-bottom:1px solid #3D3D36;}
 .brand{position:relative; display:flex; align-items:center; gap:10px; cursor:pointer; background:none; border:none; padding:0;}
-.brand-logo{height:52px; width:auto; display:block; transition:transform .3s ease;}
+.brand-logo{height:52px; width:auto; display:block; transition:transform .3s ease; animation:brand-glow 3.4s ease-in-out infinite;}
 .brand:hover .brand-logo{transform:scale(1.06) rotate(-2deg);}
 .brand-spark{position:absolute; left:20.6px; top:10.97px; width:9px; height:9px; transform:translate(-50%,-50%) scale(0.3); border-radius:50%; background:radial-gradient(circle, #fff 0%, #FFD79A 35%, rgba(219,138,46,0) 72%); opacity:0; pointer-events:none; animation:brand-spark 3.4s ease-in-out infinite;}
 .brand-plug-mask{position:absolute; left:10.44px; top:7.49px; width:22.48px; height:6.96px; background:#4F4F49; pointer-events:none;}
@@ -129,6 +129,14 @@ a:focus-visible, button:focus-visible, [tabindex]:focus-visible{outline:2px soli
   100%{opacity:0; transform:translate(-50%,-50%) scale(0.3);}
 }
 @media (prefers-reduced-motion: reduce){.brand-spark{animation:none; display:none;}}
+@keyframes brand-glow{
+  0%,82%{filter:drop-shadow(0 0 4px rgba(227,162,78,0.25)) drop-shadow(0 0 10px rgba(227,162,78,0.12));}
+  84%{filter:drop-shadow(0 0 11px rgba(255,215,122,0.85)) drop-shadow(0 0 26px rgba(227,162,78,0.5));}
+  87%{filter:drop-shadow(0 0 6px rgba(227,162,78,0.35)) drop-shadow(0 0 15px rgba(227,162,78,0.2));}
+  90%{filter:drop-shadow(0 0 9px rgba(255,215,122,0.75)) drop-shadow(0 0 22px rgba(227,162,78,0.42));}
+  94%,100%{filter:drop-shadow(0 0 4px rgba(227,162,78,0.25)) drop-shadow(0 0 10px rgba(227,162,78,0.12));}
+}
+@media (prefers-reduced-motion: reduce){.brand-logo{animation:none; filter:drop-shadow(0 0 5px rgba(227,162,78,0.22));}}
 .brand span{font-family:'Archivo',sans-serif; font-weight:800; font-size:20px; color:var(--ink);}
 .nav-links{display:none;}
 .nav-links a{color:var(--ink); font-size:14.5px; font-weight:600; cursor:pointer; transition:color .15s ease;}
