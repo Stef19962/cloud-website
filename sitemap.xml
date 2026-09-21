@@ -175,6 +175,12 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://www.itecka.com/en/stromsparrechner</loc>
+    <lastmod>2026-09-21</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://www.itecka.com/kontakt</loc>
     <lastmod>2026-09-21</lastmod>
     <changefreq>monthly</changefreq>
