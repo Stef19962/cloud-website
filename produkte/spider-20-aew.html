@@ -2085,6 +2085,32 @@ function updateProductJsonLd(state){
   }
   existing.textContent = JSON.stringify(data);
 }
+function patchProductJsonLdRating(slug, data){
+  var el = document.getElementById('product-jsonld');
+  if(!el || currentDetailSlug !== slug) return;
+  var json;
+  try{ json = JSON.parse(el.textContent); }catch(e){ return; }
+  if(data && data.count > 0){
+    json.aggregateRating = {
+      "@type": "AggregateRating",
+      "ratingValue": data.avg,
+      "reviewCount": data.count
+    };
+    json.review = data.reviews.slice(0, 20).map(function(r){
+      return {
+        "@type": "Review",
+        "author": {"@type": "Person", "name": r.name},
+        "reviewRating": {"@type": "Rating", "ratingValue": r.sterne, "bestRating": 5, "worstRating": 1},
+        "reviewBody": r.kommentar || undefined,
+        "datePublished": r.datum ? r.datum.slice(0,10) : undefined
+      };
+    });
+  } else {
+    delete json.aggregateRating;
+    delete json.review;
+  }
+  el.textContent = JSON.stringify(json);
+}
 function buildCartSummary(){
   var produkt = [], variante = [], art = [], totalQty = 0;
   cart.forEach(function(c){
@@ -2921,6 +2947,7 @@ function fetchProductReviews(slug){
       if(currentDetailSlug !== slug) return;
       renderReviewSummary(data);
       renderReviewList(data);
+      patchProductJsonLdRating(slug, data);
     })
     .catch(function(){});
 }
