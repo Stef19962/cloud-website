@@ -1941,8 +1941,10 @@ function updateSeoMeta(state){
     desc = 'Kontaktieren Sie ITECKA GmbH in Graz: Adresse, Telefon, E-Mail und Anfahrt mit Google Maps.';
   } else if(state.page === 'impressum'){
     title = 'Impressum | ITECKA';
+    desc = 'Impressum der ITECKA GmbH: Firmensitz Graz, Firmenbuchnummer, UID-Nummer und Kontaktdaten.';
   } else if(state.page === 'datenschutz'){
     title = 'Datenschutzerklärung | ITECKA';
+    desc = 'Datenschutzerklärung der ITECKA GmbH: Informationen zur Verarbeitung personenbezogener Daten auf www.itecka.com gemäß DSGVO.';
   }
   document.title = title;
   var descEl = document.querySelector('meta[name="description"]');
