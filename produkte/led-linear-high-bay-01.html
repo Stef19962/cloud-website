@@ -1,4 +1,4 @@
-<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"><style>:root{color-scheme:light}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found]){display:none!important}html:not(.app-ready) body{visibility:hidden}</style><script src="/images.js"></script></head><body>
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"><style>:root{color-scheme:light}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found]){display:none!important}html:not(.app-ready) body{visibility:hidden}</style></head><body>
 <script>(function(){
   var root = document.documentElement;
   function forceDark(){
@@ -393,9 +393,9 @@ table.varianten td{font-size:13px; padding:11px 12px; border-bottom:1px solid va
   <div style="display:flex; align-items:center; gap:40px;">
     <button class="brand" onclick="go('home')" aria-label="Zur Startseite">
       <span class="brand-plug-mask" aria-hidden="true"></span>
-      <img class="brand-plug" aria-hidden="true" data-img-id="img1">
+      <img class="brand-plug" aria-hidden="true" src="/img/img1.png" data-img-id="img1">
       <span class="brand-spark" aria-hidden="true"></span>
-      <img data-img-id="img2" alt="ITECKA" class="brand-logo">
+      <img src="/img/img2.png" data-img-id="img2" alt="ITECKA" class="brand-logo">
     </button>
     <nav class="nav-links">
       <a onclick="go('home')">Home</a>
@@ -489,12 +489,12 @@ table.varianten td{font-size:13px; padding:11px 12px; border-bottom:1px solid va
     
       <div class="block-head" id="unsere-projekte"><h2>Unsere Projekte</h2><p style="font-size:14px; color:var(--muted);">Mit ITECKA bringst du alles zum Strahlen.</p></div>
       <div class="grid-5">
-        <div class="proj-card" onclick="go('products')"><div class="img" data-img-bg-id="img36" style="background-image:none; background-size:cover; background-position:center;"></div><div class="cap"><p style="font-size:13px; font-weight:700;">Hallenbeleuchtung</p></div></div>
-        <div class="proj-card" onclick="go('products')"><div class="img" data-img-bg-id="img37" style="background-image:none; background-size:cover; background-position:center;"></div><div class="cap"><p style="font-size:13px; font-weight:700;">Laborbeleuchtung</p></div></div>
-        <div class="proj-card" onclick="go('products')"><div class="img" data-img-bg-id="img38" style="background-image:none; background-size:cover; background-position:center;"></div><div class="cap"><p style="font-size:13px; font-weight:700;">Ufobeleuchtung</p></div></div>
-        <div class="proj-card" onclick="go('products')"><div class="img" data-img-bg-id="img39" style="background-image:none; background-size:cover; background-position:center;"></div><div class="cap"><p style="font-size:13px; font-weight:700;">Lagerbeleuchtung</p></div></div>
-        <div class="proj-card" onclick="go('products')"><div class="img" data-img-bg-id="img40" style="background-image:none; background-size:cover; background-position:center;"></div><div class="cap"><p style="font-size:13px; font-weight:700;">Werkstattbeleuchtung</p></div></div>
-        <div class="proj-card" onclick="go('products')"><div class="img" data-img-bg-id="img41" style="background-image:none; background-size:cover; background-position:center;"></div><div class="cap"><p style="font-size:13px; font-weight:700;">Garagenbeleuchtung</p></div></div>
+        <div class="proj-card" onclick="go('products')"><div class="img" data-img-bg-id="img36" style="background-image:url('/img/img36.jpg'); background-size:cover; background-position:center;"></div><div class="cap"><p style="font-size:13px; font-weight:700;">Hallenbeleuchtung</p></div></div>
+        <div class="proj-card" onclick="go('products')"><div class="img" data-img-bg-id="img37" style="background-image:url('/img/img37.jpg'); background-size:cover; background-position:center;"></div><div class="cap"><p style="font-size:13px; font-weight:700;">Laborbeleuchtung</p></div></div>
+        <div class="proj-card" onclick="go('products')"><div class="img" data-img-bg-id="img38" style="background-image:url('/img/img38.jpg'); background-size:cover; background-position:center;"></div><div class="cap"><p style="font-size:13px; font-weight:700;">Ufobeleuchtung</p></div></div>
+        <div class="proj-card" onclick="go('products')"><div class="img" data-img-bg-id="img39" style="background-image:url('/img/img39.jpg'); background-size:cover; background-position:center;"></div><div class="cap"><p style="font-size:13px; font-weight:700;">Lagerbeleuchtung</p></div></div>
+        <div class="proj-card" onclick="go('products')"><div class="img" data-img-bg-id="img40" style="background-image:url('/img/img40.jpg'); background-size:cover; background-position:center;"></div><div class="cap"><p style="font-size:13px; font-weight:700;">Werkstattbeleuchtung</p></div></div>
+        <div class="proj-card" onclick="go('products')"><div class="img" data-img-bg-id="img41" style="background-image:url('/img/img41.jpg'); background-size:cover; background-position:center;"></div><div class="cap"><p style="font-size:13px; font-weight:700;">Garagenbeleuchtung</p></div></div>
       </div>
     </section>
 
@@ -570,7 +570,7 @@ table.varianten td{font-size:13px; padding:11px 12px; border-bottom:1px solid va
       <div class="block-head"><h2>Neue Produkte</h2><a onclick="go('products')">Alle Produkte ansehen &rarr;</a></div>
       <div class="grid-4">
         <div class="card product-card" data-slug="office-aufbauleuchte" onclick="go('detail','office-aufbauleuchte')">
-          <div class="pc-media" style="height:170px; width:100%;"><img class="ph" style="height:120px; width:100%; object-fit:contain;" data-img-id="img3" alt="Office Aufbauleuchte – LED-Leuchte von ITECKA für Büro & Innenbereich"></div>
+          <div class="pc-media" style="height:170px; width:100%;"><img class="ph" style="height:120px; width:100%; object-fit:contain;" src="/img/img3.png" data-img-id="img3" alt="Office Aufbauleuchte – LED-Leuchte von ITECKA für Büro & Innenbereich"></div>
           <div class="pc-body">
             <p class="pc-eyebrow">Büro &amp; Innenbereich</p>
             <p class="name">Office Aufbauleuchte</p>
@@ -579,7 +579,7 @@ table.varianten td{font-size:13px; padding:11px 12px; border-bottom:1px solid va
           </div>
         </div>
         <div class="card product-card" data-slug="blp2-deckenpanel" onclick="go('detail','blp2-deckenpanel')">
-          <div class="pc-media" style="height:170px; width:100%;"><img class="ph" style="height:120px; width:100%; object-fit:contain;" data-img-id="img4" alt="BLP2 Deckenpanel – LED-Leuchte von ITECKA für Büro & Innenbereich"></div>
+          <div class="pc-media" style="height:170px; width:100%;"><img class="ph" style="height:120px; width:100%; object-fit:contain;" src="/img/img4.png" data-img-id="img4" alt="BLP2 Deckenpanel – LED-Leuchte von ITECKA für Büro & Innenbereich"></div>
           <div class="pc-body">
             <p class="pc-eyebrow">Büro &amp; Innenbereich</p>
             <p class="name">BLP2 Deckenpanel</p>
@@ -588,7 +588,7 @@ table.varianten td{font-size:13px; padding:11px 12px; border-bottom:1px solid va
           </div>
         </div>
         <div class="card product-card" data-slug="systema-quick-r280" onclick="go('detail','systema-quick-r280')">
-          <div class="pc-media" style="height:170px; width:100%;"><img class="ph" style="height:120px; width:100%; object-fit:contain;" data-img-id="img5" alt="Systema QUICK R280 – LED-Leuchte von ITECKA für Büro & Innenbereich"></div>
+          <div class="pc-media" style="height:170px; width:100%;"><img class="ph" style="height:120px; width:100%; object-fit:contain;" src="/img/img5.png" data-img-id="img5" alt="Systema QUICK R280 – LED-Leuchte von ITECKA für Büro & Innenbereich"></div>
           <div class="pc-body">
             <p class="pc-eyebrow">Büro &amp; Innenbereich</p>
             <p class="name">Systema QUICK R280</p>
@@ -597,7 +597,7 @@ table.varianten td{font-size:13px; padding:11px 12px; border-bottom:1px solid va
           </div>
         </div>
         <div class="card product-card" data-slug="sali-lichtleiste" onclick="go('detail','sali-lichtleiste')">
-          <div class="pc-media" style="height:170px; width:100%;"><img class="ph" style="height:120px; width:100%; object-fit:contain;" data-img-id="img6" alt="SALI Lichtleiste – LED-Leuchte von ITECKA für Industrie, Gewerbe & Feuchtraum"></div>
+          <div class="pc-media" style="height:170px; width:100%;"><img class="ph" style="height:120px; width:100%; object-fit:contain;" src="/img/img6.png" data-img-id="img6" alt="SALI Lichtleiste – LED-Leuchte von ITECKA für Industrie, Gewerbe & Feuchtraum"></div>
           <div class="pc-body">
             <p class="pc-eyebrow">Industrie, Gewerbe &amp; Feuchtraum</p>
             <p class="name">SALI Lichtleiste</p>
@@ -702,7 +702,7 @@ table.varianten td{font-size:13px; padding:11px 12px; border-bottom:1px solid va
         </div>
         <div class="products-grid">
       <div class="card product-card" data-cat="buero" data-slug="led-panel-01-series" onclick="go('detail','led-panel-01-series')">
-        <img class="ph" style="height:140px; width:100%; object-fit:contain; background:#fff;" data-img-id="img7">
+        <img class="ph" style="height:140px; width:100%; object-fit:contain; background:#fff;" src="/img/img7.jpg" data-img-id="img7">
         <div class="pc-body">
           <div style="display:flex; gap:6px; flex-wrap:wrap;"><span class="badge">IP20</span><span class="badge">5 J. Garantie</span></div>
           <p class="name">LED Panel 01-Series</p>
@@ -719,7 +719,7 @@ table.varianten td{font-size:13px; padding:11px 12px; border-bottom:1px solid va
         </div>
       </div>
       <div class="card product-card" data-cat="buero" data-slug="led-updown-01-series" onclick="go('detail','led-updown-01-series')">
-        <img class="ph" style="height:140px; width:100%; object-fit:contain; background:#fff;" data-img-id="img8" alt="LED Up&amp;Down 01-Series – LED-Leuchte von ITECKA für Büro & Innenbereich">
+        <img class="ph" style="height:140px; width:100%; object-fit:contain; background:#fff;" src="/img/img8.png" data-img-id="img8" alt="LED Up&amp;Down 01-Series – LED-Leuchte von ITECKA für Büro & Innenbereich">
         <div class="pc-body">
           <div style="display:flex; gap:6px; flex-wrap:wrap;"><span class="badge">IP20</span><span class="badge">stufenlos dimmbar</span></div>
           <p class="name">LED Up&amp;Down 01-Series</p>
@@ -736,7 +736,7 @@ table.varianten td{font-size:13px; padding:11px 12px; border-bottom:1px solid va
         </div>
       </div>
       <div class="card product-card" data-cat="buero" data-slug="office-aufbauleuchte" onclick="go('detail','office-aufbauleuchte')">
-        <img class="ph" style="height:140px; width:100%; object-fit:contain; background:#fff;" data-img-id="img9" alt="Office Aufbauleuchte – LED-Leuchte von ITECKA für Büro & Innenbereich">
+        <img class="ph" style="height:140px; width:100%; object-fit:contain; background:#fff;" src="/img/img9.png" data-img-id="img9" alt="Office Aufbauleuchte – LED-Leuchte von ITECKA für Büro & Innenbereich">
         <div class="pc-body">
           <div style="display:flex; gap:6px; flex-wrap:wrap;"><span class="badge badge-amber">Neu</span><span class="badge">IP20</span><span class="badge">DALI</span></div>
           <p class="name">Office Aufbauleuchte</p>
@@ -753,7 +753,7 @@ table.varianten td{font-size:13px; padding:11px 12px; border-bottom:1px solid va
         </div>
       </div>
       <div class="card product-card" data-cat="buero" data-slug="blp2-deckenpanel" onclick="go('detail','blp2-deckenpanel')">
-        <img class="ph" style="height:140px; width:100%; object-fit:contain; background:#fff;" data-img-id="img10" alt="BLP2 Deckenpanel – LED-Leuchte von ITECKA für Büro & Innenbereich">
+        <img class="ph" style="height:140px; width:100%; object-fit:contain; background:#fff;" src="/img/img10.png" data-img-id="img10" alt="BLP2 Deckenpanel – LED-Leuchte von ITECKA für Büro & Innenbereich">
         <div class="pc-body">
           <div style="display:flex; gap:6px; flex-wrap:wrap;"><span class="badge badge-amber">Neu</span><span class="badge">IP40 &middot; IK03</span><span class="badge">UGR &le;19</span></div>
           <p class="name">BLP2 Deckenpanel</p>
@@ -770,7 +770,7 @@ table.varianten td{font-size:13px; padding:11px 12px; border-bottom:1px solid va
         </div>
       </div>
       <div class="card product-card" data-cat="buero" data-slug="systema-quick-r280" onclick="go('detail','systema-quick-r280')">
-        <img class="ph" style="height:140px; width:100%; object-fit:contain; background:#fff;" data-img-id="img11" alt="Systema QUICK R280 – LED-Leuchte von ITECKA für Büro & Innenbereich">
+        <img class="ph" style="height:140px; width:100%; object-fit:contain; background:#fff;" src="/img/img11.png" data-img-id="img11" alt="Systema QUICK R280 – LED-Leuchte von ITECKA für Büro & Innenbereich">
         <div class="pc-body">
           <div style="display:flex; gap:6px; flex-wrap:wrap;"><span class="badge badge-amber">Neu</span><span class="badge">IP54 &middot; IK08</span></div>
           <p class="name">Systema QUICK R280</p>
@@ -787,7 +787,7 @@ table.varianten td{font-size:13px; padding:11px 12px; border-bottom:1px solid va
         </div>
       </div>
       <div class="card product-card" data-cat="buero" data-slug="fit-cct-umruestkit" onclick="go('detail','fit-cct-umruestkit')">
-        <img class="ph" style="height:140px; width:100%; object-fit:contain; background:#fff;" data-img-id="img12" alt="FIT CCT LED Umrüstkit – LED-Leuchte von ITECKA für Büro & Innenbereich">
+        <img class="ph" style="height:140px; width:100%; object-fit:contain; background:#fff;" src="/img/img12.png" data-img-id="img12" alt="FIT CCT LED Umrüstkit – LED-Leuchte von ITECKA für Büro & Innenbereich">
         <div class="pc-body">
           <div style="display:flex; gap:6px; flex-wrap:wrap;"><span class="badge badge-amber">Neu</span><span class="badge">IP40</span><span class="badge">ENEC</span><span class="badge">bis 180 lm/W</span></div>
           <p class="name">FIT CCT LED Umrüstkit</p>
@@ -804,7 +804,7 @@ table.varianten td{font-size:13px; padding:11px 12px; border-bottom:1px solid va
         </div>
       </div>
       <div class="card product-card" data-cat="buero" data-slug="led-downlights-colorswitch" onclick="go('detail','led-downlights-colorswitch')">
-        <img class="ph" style="height:140px; width:100%; object-fit:contain; background:#fff;" data-img-id="img13" alt="LED Downlights ColorSwitch – LED-Leuchte von ITECKA für Büro & Innenbereich">
+        <img class="ph" style="height:140px; width:100%; object-fit:contain; background:#fff;" src="/img/img13.png" data-img-id="img13" alt="LED Downlights ColorSwitch – LED-Leuchte von ITECKA für Büro & Innenbereich">
         <div class="pc-body">
           <div style="display:flex; gap:6px; flex-wrap:wrap;"><span class="badge badge-amber">Neu</span><span class="badge">IP42</span><span class="badge">dimmbar TRIAC</span></div>
           <p class="name">LED Downlights ColorSwitch</p>
@@ -821,7 +821,7 @@ table.varianten td{font-size:13px; padding:11px 12px; border-bottom:1px solid va
         </div>
       </div>
       <div class="card product-card" data-cat="buero" data-slug="sl629-pl-sc-pendelleuchte" onclick="go('detail','sl629-pl-sc-pendelleuchte')">
-        <img class="ph" style="height:140px; width:100%; object-fit:contain; background:#fff;" data-img-id="img14" alt="SL629+ PL S/C Pendelleuchte – LED-Leuchte von ITECKA für Büro & Innenbereich">
+        <img class="ph" style="height:140px; width:100%; object-fit:contain; background:#fff;" src="/img/img14.png" data-img-id="img14" alt="SL629+ PL S/C Pendelleuchte – LED-Leuchte von ITECKA für Büro & Innenbereich">
         <div class="pc-body">
           <div style="display:flex; gap:6px; flex-wrap:wrap;"><span class="badge badge-amber">Neu</span><span class="badge">IP20</span><span class="badge">Multi White</span></div>
           <p class="name">SL629+ PL S/C Pendelleuchte</p>
@@ -838,7 +838,7 @@ table.varianten td{font-size:13px; padding:11px 12px; border-bottom:1px solid va
         </div>
       </div>
       <div class="card product-card" data-cat="industrie" data-slug="led-linear-high-bay-01" onclick="go('detail','led-linear-high-bay-01')">
-        <img class="ph" style="height:140px; width:100%; object-fit:contain; background:#fff;" data-img-id="img15" alt="LED Linear High Bay 01-Series – LED-Leuchte von ITECKA für Industrie, Gewerbe & Feuchtraum">
+        <img class="ph" style="height:140px; width:100%; object-fit:contain; background:#fff;" src="/img/img15.png" data-img-id="img15" alt="LED Linear High Bay 01-Series – LED-Leuchte von ITECKA für Industrie, Gewerbe & Feuchtraum">
         <div class="pc-body">
           <div style="display:flex; gap:6px; flex-wrap:wrap;"><span class="badge badge-tech">Aktuell</span><span class="badge">IP65 &middot; IK08</span></div>
           <p class="name">LED Linear High Bay 01-Series</p>
@@ -855,7 +855,7 @@ table.varianten td{font-size:13px; padding:11px 12px; border-bottom:1px solid va
         </div>
       </div>
       <div class="card product-card" data-cat="industrie" data-slug="led-ufo-highbay-pro-01" onclick="go('detail','led-ufo-highbay-pro-01')">
-        <img class="ph" style="height:140px; width:100%; object-fit:contain; background:#fff;" data-img-id="img16" alt="LED Ufo High Bay PRO 01-Series – LED-Leuchte von ITECKA für Industrie, Gewerbe & Feuchtraum">
+        <img class="ph" style="height:140px; width:100%; object-fit:contain; background:#fff;" src="/img/img16.png" data-img-id="img16" alt="LED Ufo High Bay PRO 01-Series – LED-Leuchte von ITECKA für Industrie, Gewerbe & Feuchtraum">
         <div class="pc-body">
           <div style="display:flex; gap:6px; flex-wrap:wrap;"><span class="badge badge-tech">Aktuell</span><span class="badge">5 J. Garantie</span></div>
           <p class="name">LED Ufo High Bay PRO 01-Series</p>
@@ -872,7 +872,7 @@ table.varianten td{font-size:13px; padding:11px 12px; border-bottom:1px solid va
         </div>
       </div>
       <div class="card product-card" data-cat="industrie" data-slug="led-wet-room-01" onclick="go('detail','led-wet-room-01')">
-        <img class="ph" style="height:140px; width:100%; object-fit:contain; background:#fff;" data-img-id="img17" alt="LED Wet Room 01-Series – LED-Leuchte von ITECKA für Industrie, Gewerbe & Feuchtraum">
+        <img class="ph" style="height:140px; width:100%; object-fit:contain; background:#fff;" src="/img/img17.png" data-img-id="img17" alt="LED Wet Room 01-Series – LED-Leuchte von ITECKA für Industrie, Gewerbe & Feuchtraum">
         <div class="pc-body">
           <div style="display:flex; gap:6px; flex-wrap:wrap;"><span class="badge badge-tech">Aktuell</span><span class="badge">IP66 &middot; IK10</span></div>
           <p class="name">LED Wet Room 01-Series</p>
@@ -889,7 +889,7 @@ table.varianten td{font-size:13px; padding:11px 12px; border-bottom:1px solid va
         </div>
       </div>
       <div class="card product-card" data-cat="industrie" data-slug="pfsb2-feuchtraumbalken" onclick="go('detail','pfsb2-feuchtraumbalken')">
-        <img class="ph" style="height:140px; width:100%; object-fit:contain; background:#fff;" data-img-id="img18" alt="PFSB2 Feuchtraumbalken – LED-Leuchte von ITECKA für Industrie, Gewerbe & Feuchtraum">
+        <img class="ph" style="height:140px; width:100%; object-fit:contain; background:#fff;" src="/img/img18.png" data-img-id="img18" alt="PFSB2 Feuchtraumbalken – LED-Leuchte von ITECKA für Industrie, Gewerbe & Feuchtraum">
         <div class="pc-body">
           <div style="display:flex; gap:6px; flex-wrap:wrap;"><span class="badge badge-amber">Neu</span><span class="badge">IP65 &middot; IK08</span></div>
           <p class="name">PFSB2 Feuchtraumbalken</p>
@@ -906,7 +906,7 @@ table.varianten td{font-size:13px; padding:11px 12px; border-bottom:1px solid va
         </div>
       </div>
       <div class="card product-card" data-cat="industrie" data-slug="sali-lichtleiste" onclick="go('detail','sali-lichtleiste')">
-        <img class="ph" style="height:140px; width:100%; object-fit:contain; background:#fff;" data-img-id="img19" alt="SALI Lichtleiste – LED-Leuchte von ITECKA für Industrie, Gewerbe & Feuchtraum">
+        <img class="ph" style="height:140px; width:100%; object-fit:contain; background:#fff;" src="/img/img19.png" data-img-id="img19" alt="SALI Lichtleiste – LED-Leuchte von ITECKA für Industrie, Gewerbe & Feuchtraum">
         <div class="pc-body">
           <div style="display:flex; gap:6px; flex-wrap:wrap;"><span class="badge badge-amber">Neu</span><span class="badge">IP21 &middot; IK03</span><span class="badge">HACCP</span></div>
           <p class="name">SALI Lichtleiste</p>
@@ -923,7 +923,7 @@ table.varianten td{font-size:13px; padding:11px 12px; border-bottom:1px solid va
         </div>
       </div>
       <div class="card product-card" data-cat="aussen" data-slug="led-floodlight-150" onclick="go('detail','led-floodlight-150')">
-        <img class="ph" style="height:140px; width:100%; object-fit:contain; background:#fff;" data-img-id="img20" alt="LED Flood Light 01-Series – 150 lm/W – LED-Leuchte von ITECKA für Außenbereich">
+        <img class="ph" style="height:140px; width:100%; object-fit:contain; background:#fff;" src="/img/img20.png" data-img-id="img20" alt="LED Flood Light 01-Series – 150 lm/W – LED-Leuchte von ITECKA für Außenbereich">
         <div class="pc-body">
           <div style="display:flex; gap:6px; flex-wrap:wrap;"><span class="badge badge-tech">Aktuell</span><span class="badge">IP66 &middot; IK08</span></div>
           <p class="name">LED Flood Light 01-Series &ndash; 150 lm/W</p>
@@ -940,7 +940,7 @@ table.varianten td{font-size:13px; padding:11px 12px; border-bottom:1px solid va
         </div>
       </div>
       <div class="card product-card" data-cat="aussen" data-slug="led-floodlight-170" onclick="go('detail','led-floodlight-170')">
-        <img class="ph" style="height:140px; width:100%; object-fit:contain; background:#fff;" data-img-id="img21" alt="LED Flood Light 01-Series – 170 lm/W – LED-Leuchte von ITECKA für Außenbereich">
+        <img class="ph" style="height:140px; width:100%; object-fit:contain; background:#fff;" src="/img/img21.png" data-img-id="img21" alt="LED Flood Light 01-Series – 170 lm/W – LED-Leuchte von ITECKA für Außenbereich">
         <div class="pc-body">
           <div style="display:flex; gap:6px; flex-wrap:wrap;"><span class="badge badge-tech">Aktuell</span><span class="badge">IP66 &middot; IK08</span></div>
           <p class="name">LED Flood Light 01-Series &ndash; 170 lm/W</p>
@@ -957,7 +957,7 @@ table.varianten td{font-size:13px; padding:11px 12px; border-bottom:1px solid va
         </div>
       </div>
       <div class="card product-card" data-cat="aussen" data-slug="led-sports-light-01" onclick="go('detail','led-sports-light-01')">
-        <img class="ph" style="height:140px; width:100%; object-fit:contain; background:#fff;" data-img-id="img22" alt="LED Sports Light 01-Series – LED-Leuchte von ITECKA für Außenbereich">
+        <img class="ph" style="height:140px; width:100%; object-fit:contain; background:#fff;" src="/img/img22.png" data-img-id="img22" alt="LED Sports Light 01-Series – LED-Leuchte von ITECKA für Außenbereich">
         <div class="pc-body">
           <div style="display:flex; gap:6px; flex-wrap:wrap;"><span class="badge badge-tech">Aktuell</span><span class="badge">IP66 &middot; IK08</span></div>
           <p class="name">LED Sports Light 01-Series</p>
@@ -974,7 +974,7 @@ table.varianten td{font-size:13px; padding:11px 12px; border-bottom:1px solid va
         </div>
       </div>
       <div class="card product-card" data-cat="aussen" data-slug="led-street-solar-01" onclick="go('detail','led-street-solar-01')">
-        <img class="ph" style="height:140px; width:100%; object-fit:contain; background:#fff;" data-img-id="img23" alt="LED Street Solar Light 01-Series – LED-Leuchte von ITECKA für Außenbereich">
+        <img class="ph" style="height:140px; width:100%; object-fit:contain; background:#fff;" src="/img/img23.png" data-img-id="img23" alt="LED Street Solar Light 01-Series – LED-Leuchte von ITECKA für Außenbereich">
         <div class="pc-body">
           <div style="display:flex; gap:6px; flex-wrap:wrap;"><span class="badge badge-tech">Aktuell</span><span class="badge">IP65</span><span class="badge">autark ohne Netz</span></div>
           <p class="name">LED Street Solar Light 01-Series</p>
@@ -991,7 +991,7 @@ table.varianten td{font-size:13px; padding:11px 12px; border-bottom:1px solid va
         </div>
       </div>
       <div class="card product-card" data-cat="aussen" data-slug="led-street-solar-02" onclick="go('detail','led-street-solar-02')">
-        <img class="ph" style="height:140px; width:100%; object-fit:contain; background:#fff;" data-img-id="img24" alt="LED Street Solar Light 02-Series – LED-Leuchte von ITECKA für Außenbereich">
+        <img class="ph" style="height:140px; width:100%; object-fit:contain; background:#fff;" src="/img/img24.png" data-img-id="img24" alt="LED Street Solar Light 02-Series – LED-Leuchte von ITECKA für Außenbereich">
         <div class="pc-body">
           <div style="display:flex; gap:6px; flex-wrap:wrap;"><span class="badge badge-tech">Aktuell</span><span class="badge">IP65</span><span class="badge">autark ohne Netz</span></div>
           <p class="name">LED Street Solar Light 02-Series</p>
@@ -1008,7 +1008,7 @@ table.varianten td{font-size:13px; padding:11px 12px; border-bottom:1px solid va
         </div>
       </div>
       <div class="card product-card" data-cat="aussen" data-slug="led-canopy-light-01" onclick="go('detail','led-canopy-light-01')">
-        <img class="ph" style="height:140px; width:100%; object-fit:contain; background:#fff;" data-img-id="img25" alt="LED Canopy Light 01-Series – LED-Leuchte von ITECKA für Außenbereich">
+        <img class="ph" style="height:140px; width:100%; object-fit:contain; background:#fff;" src="/img/img25.png" data-img-id="img25" alt="LED Canopy Light 01-Series – LED-Leuchte von ITECKA für Außenbereich">
         <div class="pc-body">
           <div style="display:flex; gap:6px; flex-wrap:wrap;"><span class="badge badge-tech">Aktuell</span><span class="badge">IP65</span><span class="badge">100.000 h</span></div>
           <p class="name">LED Canopy Light 01-Series</p>
@@ -1025,7 +1025,7 @@ table.varianten td{font-size:13px; padding:11px 12px; border-bottom:1px solid va
         </div>
       </div>
       <div class="card product-card" data-cat="aussen" data-slug="guell-1-aw" onclick="go('detail','guell-1-aw')">
-        <img class="ph" style="height:140px; width:100%; object-fit:contain; background:#fff;" data-img-id="img26" alt="GUELL 1+ A/W – LED-Leuchte von ITECKA für Außenbereich">
+        <img class="ph" style="height:140px; width:100%; object-fit:contain; background:#fff;" src="/img/img26.png" data-img-id="img26" alt="GUELL 1+ A/W – LED-Leuchte von ITECKA für Außenbereich">
         <div class="pc-body">
           <div style="display:flex; gap:6px; flex-wrap:wrap;"><span class="badge badge-amber">Neu</span><span class="badge">IP66</span><span class="badge">Design: Giorgio Lodi</span></div>
           <p class="name">GUELL 1+ A/W</p>
@@ -1042,7 +1042,7 @@ table.varianten td{font-size:13px; padding:11px 12px; border-bottom:1px solid va
         </div>
       </div>
       <div class="card product-card" data-cat="aussen" data-slug="guell-2-aw" onclick="go('detail','guell-2-aw')">
-        <img class="ph" style="height:140px; width:100%; object-fit:contain; background:#fff;" data-img-id="img27" alt="GUELL 2+ A/W – LED-Leuchte von ITECKA für Außenbereich">
+        <img class="ph" style="height:140px; width:100%; object-fit:contain; background:#fff;" src="/img/img27.png" data-img-id="img27" alt="GUELL 2+ A/W – LED-Leuchte von ITECKA für Außenbereich">
         <div class="pc-body">
           <div style="display:flex; gap:6px; flex-wrap:wrap;"><span class="badge badge-amber">Neu</span><span class="badge">IP66</span><span class="badge">Design: Giorgio Lodi</span></div>
           <p class="name">GUELL 2+ A/W</p>
@@ -1059,7 +1059,7 @@ table.varianten td{font-size:13px; padding:11px 12px; border-bottom:1px solid va
         </div>
       </div>
       <div class="card product-card" data-cat="aussen" data-slug="guell-3-aw" onclick="go('detail','guell-3-aw')">
-        <img class="ph" style="height:140px; width:100%; object-fit:contain; background:#fff;" data-img-id="img28" alt="GUELL 3 A/W – LED-Leuchte von ITECKA für Außenbereich">
+        <img class="ph" style="height:140px; width:100%; object-fit:contain; background:#fff;" src="/img/img28.png" data-img-id="img28" alt="GUELL 3 A/W – LED-Leuchte von ITECKA für Außenbereich">
         <div class="pc-body">
           <div style="display:flex; gap:6px; flex-wrap:wrap;"><span class="badge badge-amber">Neu</span><span class="badge">IP66 &middot; IK07</span></div>
           <p class="name">GUELL 3 A/W</p>
@@ -1076,7 +1076,7 @@ table.varianten td{font-size:13px; padding:11px 12px; border-bottom:1px solid va
         </div>
       </div>
       <div class="card product-card" data-cat="aussen" data-slug="spider-20-aew" onclick="go('detail','spider-20-aew')">
-        <img class="ph" style="height:140px; width:100%; object-fit:contain; background:#fff;" data-img-id="img29" alt="SPIDER+ 20 A/EW – LED-Leuchte von ITECKA für Außenbereich">
+        <img class="ph" style="height:140px; width:100%; object-fit:contain; background:#fff;" src="/img/img29.png" data-img-id="img29" alt="SPIDER+ 20 A/EW – LED-Leuchte von ITECKA für Außenbereich">
         <div class="pc-body">
           <div style="display:flex; gap:6px; flex-wrap:wrap;"><span class="badge badge-amber">Neu</span><span class="badge">IP66 &middot; IK05</span></div>
           <p class="name">SPIDER+ 20 A/EW</p>
@@ -1093,7 +1093,7 @@ table.varianten td{font-size:13px; padding:11px 12px; border-bottom:1px solid va
         </div>
       </div>
       <div class="card product-card" data-cat="aussen" data-slug="kha9-pollerleuchte" onclick="go('detail','kha9-pollerleuchte')">
-        <img class="ph" style="height:140px; width:100%; object-fit:contain; background:#fff;" data-img-id="img30" alt="KHA 9 LED Pollerleuchte – LED-Leuchte von ITECKA für Außenbereich">
+        <img class="ph" style="height:140px; width:100%; object-fit:contain; background:#fff;" src="/img/img30.png" data-img-id="img30" alt="KHA 9 LED Pollerleuchte – LED-Leuchte von ITECKA für Außenbereich">
         <div class="pc-body">
           <div style="display:flex; gap:6px; flex-wrap:wrap;"><span class="badge badge-amber">Neu</span><span class="badge">IP66 &middot; IK10</span></div>
           <p class="name">KHA 9 LED Pollerleuchte</p>
@@ -1110,7 +1110,7 @@ table.varianten td{font-size:13px; padding:11px 12px; border-bottom:1px solid va
         </div>
       </div>
       <div class="card product-card" data-cat="aussen" data-slug="theos-glass-mini-sr075" onclick="go('detail','theos-glass-mini-sr075')">
-        <img class="ph" style="height:140px; width:100%; object-fit:contain; background:#fff;" data-img-id="img31" alt="THEOS GLASS MINI SR/075 – LED-Leuchte von ITECKA für Außenbereich">
+        <img class="ph" style="height:140px; width:100%; object-fit:contain; background:#fff;" src="/img/img31.png" data-img-id="img31" alt="THEOS GLASS MINI SR/075 – LED-Leuchte von ITECKA für Außenbereich">
         <div class="pc-body">
           <div style="display:flex; gap:6px; flex-wrap:wrap;"><span class="badge badge-amber">Neu</span><span class="badge">IP66</span><span class="badge">CRI 70</span></div>
           <p class="name">THEOS GLASS MINI SR/075</p>
@@ -1838,10 +1838,10 @@ table.varianten td{font-size:13px; padding:11px 12px; border-bottom:1px solid va
       <a onclick="go('products')">Büro &amp; Innenbereich</a><a onclick="go('products')">Industrie &amp; Gewerbe</a><a onclick="go('products')">Außenbereich</a>
     </div>
     <div id="footer-unternehmen" style="display:flex; flex-direction:column; gap:9px;">
-      <img class="cols-watermark" data-img-id="img32" alt="" aria-hidden="true">
-      <img class="cols-watermark cols-watermark-bolts" data-img-id="img33" alt="" aria-hidden="true">
-      <img class="cols-watermark cols-watermark-ring" data-img-id="img34" alt="" aria-hidden="true">
-      <img class="cols-watermark cols-watermark-spark" data-img-id="img35" alt="" aria-hidden="true">
+      <img class="cols-watermark" src="/img/img32.png" data-img-id="img32" alt="" aria-hidden="true">
+      <img class="cols-watermark cols-watermark-bolts" src="/img/img33.png" data-img-id="img33" alt="" aria-hidden="true">
+      <img class="cols-watermark cols-watermark-ring" src="/img/img34.png" data-img-id="img34" alt="" aria-hidden="true">
+      <img class="cols-watermark cols-watermark-spark" src="/img/img35.png" data-img-id="img35" alt="" aria-hidden="true">
       <p style="color:#fff; font-weight:700; font-size:12.5px; text-transform:uppercase; letter-spacing:0.04em; margin-bottom:4px;">Unternehmen</p>
       <a onclick="go('about')">Über uns</a><a onclick="go('home')">Projekte</a><a onclick="go('stromsparrechner')" style="cursor:pointer;">Stromsparrechner</a><a onclick="go('ledsolar')" style="cursor:pointer;">Solar Straßenlaternen</a><a href="/itecka-produktkatalog.pdf" target="_blank" rel="noopener" onclick="catalogComingSoon(event)">Digitaler Katalog</a>
     </div>
@@ -2345,7 +2345,7 @@ var NEWSLETTER_BANNER_HTML = '<div class="card" style="grid-column:1/-1; backgro
     '<button type="submit" class="btn btn-primary" style="font-size:14px; padding:10px 18px;">Anmelden</button>' +
   '</form>' +
 '</div>';
-var ITECKA_STAMP_SRC = ITECKA_IMAGES['img42'];
+var ITECKA_STAMP_SRC = '/img/img42.png';
 var ITECKA_STAMP_SLUGS = [];
 function stampOverlayHtml(slug, sizePct){
   if(ITECKA_STAMP_SLUGS.indexOf(slug) === -1) return '';
@@ -3153,8 +3153,6 @@ function renderCart(){
   }).join('');
 }
 
-document.querySelectorAll('[data-img-id]').forEach(function(el){var v=ITECKA_IMAGES[el.getAttribute('data-img-id')]; if(v) el.src=v;});
-document.querySelectorAll('[data-img-bg-id]').forEach(function(el){var v=ITECKA_IMAGES[el.getAttribute('data-img-bg-id')]; if(v) el.style.backgroundImage="url('"+v+"')";});
 
 try{ if('scrollRestoration' in history) history.scrollRestoration = 'manual'; }catch(e){}
 buildImgMap();
